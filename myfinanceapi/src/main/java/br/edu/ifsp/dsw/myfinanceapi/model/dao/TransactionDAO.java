@@ -46,7 +46,7 @@ public class TransactionDAO extends BasicDAO<Transaction> {
 			}
 		}
 		catch(Throwable t) {
-			log.error("Error on transaction saving", t); 
+			log.error("Error on transaction saving"); 
 			throw t;
 		}
 	}
@@ -62,7 +62,7 @@ public class TransactionDAO extends BasicDAO<Transaction> {
 			return rows > 0;
 		}
 		catch(Throwable t) {
-			log.error("Error on deleting transaction", t);
+			log.error("Error on deleting transaction");
 			throw t;
 		}
 	}

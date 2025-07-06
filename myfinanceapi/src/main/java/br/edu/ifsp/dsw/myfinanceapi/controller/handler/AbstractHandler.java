@@ -22,7 +22,7 @@ public abstract class AbstractHandler implements Handler {
 			next.handle(request, response);
 		}
 		else {
-			response.sendError(HttpStatus.SC_NOT_FOUND, "Endpoint not found.");
+			response.setStatus(HttpStatus.SC_BAD_REQUEST);
 		}
 	}
 	

@@ -30,7 +30,7 @@ public class CategoryDAO extends BasicDAO<Category> {
 			}
 		}
 		catch(Throwable t) {
-			log.error("Error on saving category", t);
+			log.error("Error on saving category");
 			throw t;
 		}
 	}

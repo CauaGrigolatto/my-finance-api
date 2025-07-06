@@ -31,7 +31,7 @@ public abstract class BasicDAO<E> {
 			conn.close();
 		}
 		catch(Throwable t) {
-			log.error("Error on commiting transaction", t);
+			log.error("Error on commiting transaction");
 			throw t;
 		}
 	}
@@ -42,7 +42,7 @@ public abstract class BasicDAO<E> {
 			conn.close();
 		}
 		catch(Throwable t) {
-			log.error("Error on rolling back transaction", t);
+			log.error("Error on rolling back transaction");
 			throw t;
 		}
 	}
@@ -57,7 +57,7 @@ public abstract class BasicDAO<E> {
 			
 		}
 		catch(Throwable t) {
-			log.error("Error on setting connection", t);
+			log.error("Error on setting connection");
 			throw t;
 		}
 	}

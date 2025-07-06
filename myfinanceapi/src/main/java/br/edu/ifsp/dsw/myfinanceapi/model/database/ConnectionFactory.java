@@ -21,7 +21,7 @@ public class ConnectionFactory {
 			return conn;
 		}
 		catch(Throwable t) {
-			log.error("Error on getting connection", t);
+			log.error("Error on getting connection");
 			throw t;
 		}		
 	}
@@ -33,7 +33,7 @@ public class ConnectionFactory {
 			conn = ds.getConnection();			
 		}
 		catch(Throwable t) {
-			log.error("Error on creating connection", t);
+			log.error("Error on creating connection");
 			throw t;
 		}
 	}

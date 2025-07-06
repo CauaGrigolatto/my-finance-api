@@ -49,7 +49,7 @@ public class GetTransactionCommand extends AbstractJsonCommand {
 		}
 		catch(Throwable t) {
 			response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-			log.error("Error on finding transaction by ID", t);
+			log.error("Error on finding transaction by ID");
 			throw t;
 		}
 		finally {			

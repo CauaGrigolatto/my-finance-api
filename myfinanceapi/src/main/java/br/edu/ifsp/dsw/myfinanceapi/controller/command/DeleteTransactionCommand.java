@@ -33,7 +33,7 @@ public class DeleteTransactionCommand extends AbstractJsonCommand {
 		catch(Throwable t) {
 			transactionDAO.rollback();
 			response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-			log.error("Error on deleting transaction", t);
+			log.error("Error on deleting transaction");
 			throw t;
 		}
 	}
