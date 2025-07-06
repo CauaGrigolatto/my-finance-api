@@ -1,12 +1,16 @@
 package br.edu.ifsp.dsw.myfinanceapi.model.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Date;
 import java.util.List;
 
+import br.edu.ifsp.dsw.myfinanceapi.model.entity.Category;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Transaction;
+import br.edu.ifsp.dsw.myfinanceapi.model.enums.TransactionType;
 
 public class TransactionDAO extends BasicDAO<Transaction> {
 
@@ -60,14 +64,58 @@ public class TransactionDAO extends BasicDAO<Transaction> {
 
 	@Override
 	public Transaction findById(Integer id) throws Throwable {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT t.transaction_id AS transactionId, ");
+			sql.append("t.description AS description, ");
+			sql.append("t.value AS value, ");
+			sql.append("t.type AS type, ");
+			sql.append("t.due_date AS dueDate, ");
+			sql.append("t.category_id AS categoryId ");
+			sql.append("FROM transaction t ");
+			sql.append("WHERE t.transaction_id = ? ");
+			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			
+			Transaction transaction = null;
+			
+			if (rs.next()) {				
+				transaction = buildEntity(rs);
+			}
+			
+			return transaction;
+		}
+		catch(Throwable t) {
+			log.error("Error on finding transaction by id");
+			throw t;
+		}
 	}
 
 	@Override
 	public List<Transaction> findByFilter() throws Throwable {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	protected Transaction buildEntity(ResultSet resultSet) throws Throwable {
+		Integer transactionId = resultSet.getInt("transactionId");
+		String description = resultSet.getString("description");
+		BigDecimal value = resultSet.getBigDecimal("value");
+		TransactionType type = TransactionType.valueOf(resultSet.getString("type"));
+		Date dueDate = resultSet.getDate("dueDate");
+		Integer categoryId = resultSet.getInt("categoryId");
+		
+		Transaction transaction = new Transaction();
+		transaction.setId(transactionId);
+		transaction.setDescription(description);
+		transaction.setValue(value);
+		transaction.setType(type);
+		transaction.setDueDate(dueDate);
+		transaction.setCategory(new Category(categoryId));
+		
+		return transaction;
 	}
 	
 }

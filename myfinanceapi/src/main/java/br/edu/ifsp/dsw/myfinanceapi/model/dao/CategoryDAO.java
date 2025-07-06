@@ -42,13 +42,43 @@ public class CategoryDAO extends BasicDAO<Category> {
 
 	@Override
 	public Category findById(Integer id) throws Throwable {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT c.category_id AS categoryId, ");
+			sql.append("c.title AS title ");
+			sql.append("FROM category c ");
+			sql.append("WHERE c.category_id = ? ");
+			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			
+			Category category = null;
+			
+			if (rs.next()) {
+				category = buildEntity(rs);
+			}
+			
+			return category;
+		}
+		catch(Throwable t) {
+			log.error("Error on finding category by ID");
+			throw t;
+		}
 	}
 
 	@Override
 	public List<Category> findByFilter() throws Throwable {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	protected Category buildEntity(ResultSet resultSet) throws Throwable {
+		Category category = new Category();
+		Integer categoryId = resultSet.getInt("categoryId");
+		String title = resultSet.getString("title");
+		category.setId(categoryId);
+		category.setTitle(title);
+		return category;
 	}
 }

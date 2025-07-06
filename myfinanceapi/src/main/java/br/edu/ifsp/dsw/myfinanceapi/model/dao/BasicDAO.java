@@ -1,6 +1,7 @@
 package br.edu.ifsp.dsw.myfinanceapi.model.dao;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ public abstract class BasicDAO<E> {
 	public abstract boolean delete(E entity) throws Throwable;
 	public abstract E findById(Integer id) throws Throwable;
 	public abstract List<E> findByFilter() throws Throwable;
+	protected abstract E buildEntity(ResultSet resultSet) throws Throwable;
 	
 	public void commit() throws Throwable {
 		try {
