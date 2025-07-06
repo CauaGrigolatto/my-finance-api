@@ -13,17 +13,17 @@ public class ConnectionFactory {
 	
 	private static Connection conn;
 	
-	public static Connection getConnection() {
+	public static Connection getConnection() throws Throwable {
 		try {			
 			if (conn == null || conn.isClosed()) {
 				createConnection();
 			}
+			return conn;
 		}
 		catch(Throwable t) {
 			log.error("Error on getting connection", t);
-		}
-		
-		return conn;
+			throw t;
+		}		
 	}
 	
 	private static void createConnection() throws Throwable {
