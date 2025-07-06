@@ -43,9 +43,19 @@ public class TransactionDAO extends BasicDAO<Transaction> {
 	}
 
 	@Override
-	public boolean delete(Transaction entity) throws Throwable {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean delete(Transaction transaction) throws Throwable {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("DELETE FROM transaction WHERE transaction_id = ? ");
+			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			ps.setInt(1, transaction.getId());
+			int rows = ps.executeUpdate();
+			return rows > 0;
+		}
+		catch(Throwable t) {
+			log.error("Error on deleting transaction", t);
+			throw t;
+		}
 	}
 
 	@Override
