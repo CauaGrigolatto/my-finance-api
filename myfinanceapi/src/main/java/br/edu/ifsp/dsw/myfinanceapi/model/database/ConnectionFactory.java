@@ -34,6 +34,7 @@ public class ConnectionFactory {
 		}
 		catch(Throwable t) {
 			log.error("Error on creating connection", t);
+			throw t;
 		}
 	}
 }
