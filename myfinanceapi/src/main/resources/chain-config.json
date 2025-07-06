@@ -1,0 +1,5 @@
+{
+	"chain": [
+		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.PostTransactionHandler"
+	]
+}
