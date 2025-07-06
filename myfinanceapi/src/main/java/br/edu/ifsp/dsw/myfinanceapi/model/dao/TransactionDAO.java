@@ -6,8 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
+import br.edu.ifsp.dsw.myfinanceapi.dto.FilterDTO;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Category;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Transaction;
 import br.edu.ifsp.dsw.myfinanceapi.model.enums.TransactionType;
@@ -93,9 +95,35 @@ public class TransactionDAO extends BasicDAO<Transaction> {
 	}
 
 	@Override
-	public List<Transaction> findByFilter() throws Throwable {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Transaction> findByFilter(FilterDTO filter) throws Throwable {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT t.transaction_id AS transactionId, ");
+			sql.append("t.description AS description, ");
+			sql.append("t.value AS value, ");
+			sql.append("t.type AS type, ");
+			sql.append("t.due_date AS dueDate, ");
+			sql.append("t.category_id AS categoryId ");
+			sql.append("FROM transaction t ");
+			sql.append(filter.buildWhere());
+//			sql.append("LIMIT 2 OFFSET 0 ");
+			
+			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			ResultSet rs = ps.executeQuery();
+			
+			List<Transaction> transactions = new LinkedList<Transaction>();
+			
+			while (rs.next()) {
+				Transaction transaction = buildEntity(rs);
+				transactions.add(transaction);
+			}
+			
+			return transactions;
+		}
+		catch(Throwable t) {
+			log.error("Error on finding by filter");
+			throw t;
+		}
 	}
 	
 	@Override

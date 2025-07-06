@@ -7,6 +7,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.edu.ifsp.dsw.myfinanceapi.dto.FilterDTO;
+
 public abstract class BasicDAO<E> {
 	
 	protected static final Logger log = LoggerFactory.getLogger(BasicDAO.class);
@@ -20,7 +22,7 @@ public abstract class BasicDAO<E> {
 	public abstract void save(E entity) throws Throwable;
 	public abstract boolean delete(E entity) throws Throwable;
 	public abstract E findById(Integer id) throws Throwable;
-	public abstract List<E> findByFilter() throws Throwable;
+	public abstract List<E> findByFilter(FilterDTO filter) throws Throwable;
 	protected abstract E buildEntity(ResultSet resultSet) throws Throwable;
 	
 	public void commit() throws Throwable {

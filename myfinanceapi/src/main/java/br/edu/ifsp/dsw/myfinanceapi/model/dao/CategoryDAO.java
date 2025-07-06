@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 
+import br.edu.ifsp.dsw.myfinanceapi.dto.FilterDTO;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Category;
 
 public class CategoryDAO extends BasicDAO<Category> {
@@ -67,7 +68,7 @@ public class CategoryDAO extends BasicDAO<Category> {
 	}
 
 	@Override
-	public List<Category> findByFilter() throws Throwable {
+	public List<Category> findByFilter(FilterDTO filter) throws Throwable {
 		// TODO Auto-generated method stub
 		return null;
 	}

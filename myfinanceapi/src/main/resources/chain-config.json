@@ -1,7 +1,8 @@
 {
 	"chain": [
+		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.GetTransactionHandler",
+		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.GetTransactionListHandler",
 		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.PostTransactionHandler",
-		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.DeleteTransactionHandler",
-		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.GetTransactionHandler"
+		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.DeleteTransactionHandler"
 	]
 }
