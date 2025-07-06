@@ -9,7 +9,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.edu.ifsp.dsw.myfinanceapi.dto.FilterDTO;
+import br.edu.ifsp.dsw.myfinanceapi.dto.TransactionFilterDTO;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Category;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Transaction;
 import br.edu.ifsp.dsw.myfinanceapi.model.enums.TransactionType;
@@ -95,8 +98,10 @@ public class TransactionDAO extends BasicDAO<Transaction> {
 	}
 
 	@Override
-	public List<Transaction> findByFilter(FilterDTO filter) throws Throwable {
+	public List<Transaction> findByFilter(FilterDTO filterDTO) throws Throwable {
 		try {
+			TransactionFilterDTO transactionFilterDTO = (TransactionFilterDTO) filterDTO;
+
 			StringBuilder sql = new StringBuilder();
 			sql.append("SELECT t.transaction_id AS transactionId, ");
 			sql.append("t.description AS description, ");
@@ -105,10 +110,40 @@ public class TransactionDAO extends BasicDAO<Transaction> {
 			sql.append("t.due_date AS dueDate, ");
 			sql.append("t.category_id AS categoryId ");
 			sql.append("FROM transaction t ");
-			sql.append(filter.buildWhere());
-//			sql.append("LIMIT 2 OFFSET 0 ");
+			sql.append(transactionFilterDTO.buildWhere());
 			
+			
+			int index = 1;
 			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			
+			if (StringUtils.isNotBlank(transactionFilterDTO.getDescription())) {
+			    ps.setString(index++, "%" + transactionFilterDTO.getDescription() + "%");
+			}
+
+			if (transactionFilterDTO.getValue() != null) {
+			    ps.setBigDecimal(index++, transactionFilterDTO.getValue());
+			}
+
+			if (transactionFilterDTO.getMonth() != null && transactionFilterDTO.getMonth() != -1) {
+			    ps.setInt(index++, transactionFilterDTO.getMonth());
+			}
+
+			if (transactionFilterDTO.getYear() != null && transactionFilterDTO.getYear() != -1) {
+			    ps.setInt(index++, transactionFilterDTO.getYear());
+			}
+
+			if (transactionFilterDTO.getType() != null) {
+			    ps.setString(index++, transactionFilterDTO.getType().name());
+			}
+
+			if (transactionFilterDTO.getCategoryId() != null && transactionFilterDTO.getCategoryId() != -1) {
+			    ps.setInt(index++, transactionFilterDTO.getCategoryId());
+			}
+
+			ps.setInt(index++, transactionFilterDTO.getLimit());
+
+			ps.setInt(index++, transactionFilterDTO.getOffset());
+
 			ResultSet rs = ps.executeQuery();
 			
 			List<Transaction> transactions = new LinkedList<Transaction>();

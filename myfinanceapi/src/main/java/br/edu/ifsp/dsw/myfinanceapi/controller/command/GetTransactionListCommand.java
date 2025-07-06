@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpStatus;
 
@@ -57,36 +58,57 @@ public class GetTransactionListCommand extends AbstractJsonCommand {
 	}
 	
 	private TransactionFilterDTO toTransactionFilterDTO(HttpServletRequest request) {
-		TransactionFilterDTO filter = new TransactionFilterDTO();
-		
-		
-		filter.description = request.getParameter("description");
-		
-		BigDecimal value = null;
-		
-		try {
-			value = new BigDecimal(request.getParameter("value"));
-		}
-		catch(Throwable t) {
-			value = null;
-		}
-		
-		filter.value = value;
-		filter.month = NumberUtils.toInt(request.getParameter("month"), -1);
-		filter.year = NumberUtils.toInt(request.getParameter("year"), -1);
-		filter.categoryId = NumberUtils.toInt(request.getParameter("category"), -1);
-		
-		TransactionType type = null;
-		
-		try {
-			type = TransactionType.valueOf(request.getParameter("type"));
-		}
-		catch (Throwable t) {
-			type = null;
-		}
-		
-		filter.type = type;
-		
-		return filter;
+	    TransactionFilterDTO filter = new TransactionFilterDTO();
+
+	    String description = request.getParameter("description");
+	    if (StringUtils.isNotBlank(description)) {
+	        filter.setDescription(description.trim());
+	    }
+
+	    String valueStr = request.getParameter("value");
+	    if (StringUtils.isNotBlank(valueStr)) {
+	        try {
+	            BigDecimal value = new BigDecimal(valueStr);
+	            filter.setValue(value);
+	        } catch (NumberFormatException ex) {
+	            filter.setValue(null);
+	        }
+	    }
+
+	    int month = NumberUtils.toInt(request.getParameter("month"), -1);
+	    filter.setMonth(month);
+
+	    int year = NumberUtils.toInt(request.getParameter("year"), -1);
+	    filter.setYear(year);
+
+	    int categoryId = NumberUtils.toInt(request.getParameter("category"), -1);
+	    filter.setCategoryId(categoryId);
+
+	    String typeStr = request.getParameter("type");
+	    if (StringUtils.isNotBlank(typeStr)) {
+	        try {
+	            TransactionType type = TransactionType.valueOf(typeStr);
+	            filter.setType(type);
+	        } catch (IllegalArgumentException ex) {
+	            filter.setType(null);
+	        }
+	    }
+
+	    int page = NumberUtils.toInt(request.getParameter("page"), 1);
+	    if (page < 1) {
+	        page = 1;
+	    }
+
+	    int pageSize = NumberUtils.toInt(request.getParameter("size"), 2);
+	    if (pageSize < 1) {
+	        pageSize = 10;
+	    }
+
+	    int offset = (page - 1) * pageSize;
+
+	    filter.setLimit(pageSize);
+	    filter.setOffset(offset);
+
+	    return filter;
 	}
 }
