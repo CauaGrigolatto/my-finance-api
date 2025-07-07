@@ -50,6 +50,36 @@ public class TransactionDAO extends BasicDAO<Transaction> {
 			throw t;
 		}
 	}
+	
+	@Override
+	public boolean update(Transaction transaction) throws Throwable {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE transaction SET ");
+			sql.append("description = ?, ");
+			sql.append("value = ?, ");
+			sql.append("type = ?, ");
+			sql.append("due_date = ?, ");
+			sql.append("category_id = ? ");
+			sql.append("WHERE transaction_id = ? ");
+			
+			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			ps.setString(1, transaction.getDescription());
+			ps.setBigDecimal(2, transaction.getValue());
+			ps.setString(3, transaction.getType().toString());
+			ps.setDate(4, new java.sql.Date(transaction.getDueDate().getTime()));
+			ps.setInt(5, transaction.getCategory().getId());
+			ps.setInt(6, transaction.getId());
+			
+			int rows = ps.executeUpdate();
+			
+			return rows > 0;
+		}
+		catch(Throwable t) {
+			log.error("Error on updating transaction");
+			throw t;
+		}
+	}
 
 	@Override
 	public boolean delete(Transaction transaction) throws Throwable {

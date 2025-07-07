@@ -38,6 +38,11 @@ public class CategoryDAO extends BasicDAO<Category> {
 			throw t;
 		}
 	}
+	
+	@Override
+	public boolean update(Category entity) throws Throwable {
+		return false;
+	}
 
 	@Override
 	public boolean delete(Category category) throws Throwable {
