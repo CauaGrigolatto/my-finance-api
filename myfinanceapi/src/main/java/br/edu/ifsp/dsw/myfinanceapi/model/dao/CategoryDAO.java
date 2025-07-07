@@ -3,8 +3,12 @@ package br.edu.ifsp.dsw.myfinanceapi.model.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
+import br.edu.ifsp.dsw.myfinanceapi.dto.CategoryFilterDTO;
 import br.edu.ifsp.dsw.myfinanceapi.dto.FilterDTO;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Category;
 
@@ -79,8 +83,37 @@ public class CategoryDAO extends BasicDAO<Category> {
 
 	@Override
 	public List<Category> findByFilter(FilterDTO filter) throws Throwable {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			CategoryFilterDTO categoryFilterDTO = (CategoryFilterDTO) filter;
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT c.category_id AS categoryId, ");
+			sql.append("c.title AS title ");
+			sql.append("FROM category c ");
+			sql.append(filter.buildWhere());
+			
+			int index = 1;
+			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			
+			if (StringUtils.isNotBlank(categoryFilterDTO.getTitle())) {
+			    ps.setString(index++, "%" + categoryFilterDTO.getTitle() + "%");
+			}
+			
+			ResultSet rs = ps.executeQuery();
+			
+			List<Category> categories = new LinkedList<Category>();
+			
+			while (rs.next()) {
+				Category category = buildEntity(rs);
+				categories.add(category);
+			}
+			
+			return categories;
+		}
+		catch(Throwable t) {
+			log.error("Error on finding by filter");
+			throw t;
+		}
 	}
 	
 	@Override

@@ -112,7 +112,6 @@ public class TransactionDAO extends BasicDAO<Transaction> {
 			sql.append("FROM transaction t ");
 			sql.append(transactionFilterDTO.buildWhere());
 			
-			
 			int index = 1;
 			PreparedStatement ps = conn.prepareStatement(sql.toString());
 			
