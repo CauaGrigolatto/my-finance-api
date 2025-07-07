@@ -25,7 +25,7 @@ public class CategoryDAO extends BasicDAO<Category> {
 			ResultSet rs = ps.getGeneratedKeys();
 			
 			if (rs.next()) {
-				Integer id = rs.getInt("category_id");
+				Integer id = rs.getInt(1);
 				category.setId(id);
 			}
 		}
@@ -36,9 +36,19 @@ public class CategoryDAO extends BasicDAO<Category> {
 	}
 
 	@Override
-	public boolean delete(Category entity) throws Throwable {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean delete(Category category) throws Throwable {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("DELETE FROM category WHERE category_id = ? ");
+			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			ps.setInt(1, category.getId());
+			int rows = ps.executeUpdate();
+			return rows > 0;
+		}
+		catch(Throwable t) {
+			log.error("Error on deleting category");
+			throw t;
+		}
 	}
 
 	@Override

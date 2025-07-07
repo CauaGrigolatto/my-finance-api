@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `my_finance_api`.`transaction` (
   `value` DECIMAL(7,2) NOT NULL,
   `type` ENUM('EXPENSE', 'REVENUE') CHARACTER SET 'utf8' NOT NULL,
   `due_date` DATE NULL,
-  `category_id` INT NOT NULL,
+  `category_id` INT NULL,
   PRIMARY KEY (`transaction_id`),
   INDEX `fk_transaction_category_idx` (`category_id` ASC) VISIBLE,
   CONSTRAINT `fk_transaction_category`
