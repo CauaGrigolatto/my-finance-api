@@ -78,7 +78,7 @@ public class PostTransactionCommand extends AbstractJsonCommand {
 			transactionDAO.rollback();
 			log.error("Error on transaction creation");
 			
-			ResponseDTO responseDTO = new ResponseDTO<Transaction>(
+			ResponseDTO<Transaction> responseDTO = new ResponseDTO<Transaction>(
 				HttpStatus.SC_INTERNAL_SERVER_ERROR,
 				"An error occurred while processing your request.",
 				null,

@@ -8,9 +8,14 @@ public class PutTransactionHandler extends AbstractHandler {
 	@Override
 	protected boolean canHandle(HttpServletRequest request) {
 		boolean isPost = "PUT".equalsIgnoreCase(request.getMethod());
-		boolean isPath = "/transaction".equals(request.getPathInfo());
-		boolean hasBody = request.getContentLength() > 0 || request.getContentLength() == -1;
-		return isPost && isPath && hasBody;
+		
+		String pathInfo = request.getPathInfo();
+		
+		boolean isValidPath = pathInfo != null && pathInfo.matches("^/transaction/\\d+$");
+		
+	    boolean hasBody = request.getContentLength() > 0 || request.getContentLength() == -1;
+		
+		return isPost && isValidPath && hasBody;
 	}
 
 	@Override
