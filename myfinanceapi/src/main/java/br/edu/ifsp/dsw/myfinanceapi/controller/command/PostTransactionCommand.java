@@ -76,8 +76,20 @@ public class PostTransactionCommand extends AbstractJsonCommand {
 		}
 		catch(Throwable t) {
 			transactionDAO.rollback();
-			response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
 			log.error("Error on transaction creation");
+			
+			ResponseDTO responseDTO = new ResponseDTO<Transaction>(
+				HttpStatus.SC_INTERNAL_SERVER_ERROR,
+				"An error occurred while processing your request.",
+				null,
+				null
+			);
+			
+			String responnseJson = gson.toJson(responseDTO);
+			response.setContentType("application/json");
+			response.getWriter().write(responnseJson);
+			
+			response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
 			throw t;
 		}
 	}
