@@ -25,15 +25,15 @@ public class PutCategoryCommand extends AbstractJsonCommand {
 		try {
 			String json = toJson(request);
 			Category category = gson.fromJson(json, Category.class);
-			categoryDAO.save(category);
-			log.info("Category created successfully");
+			categoryDAO.update(category);
+			log.info("Category updated successfully");
 			categoryDAO.commit();
-			response.setStatus(HttpStatus.SC_CREATED);
+			response.setStatus(HttpStatus.SC_OK);
 		}
 		catch(Throwable t) {
 			categoryDAO.rollback();
 			response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-			log.error("Error on category creation");
+			log.error("Error on category update");
 			throw t;
 		}
 	}

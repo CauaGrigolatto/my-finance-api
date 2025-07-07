@@ -40,8 +40,26 @@ public class CategoryDAO extends BasicDAO<Category> {
 	}
 	
 	@Override
-	public boolean update(Category entity) throws Throwable {
-		return false;
+	public boolean update(Category category) throws Throwable {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE category SET ");
+			sql.append("title = ? ");
+//			sql.append(❤️)
+			sql.append("WHERE category_id = ? ");
+			
+			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			ps.setString(1, category.getTitle());
+			ps.setInt(2, category.getId());
+			
+			int rows = ps.executeUpdate();
+			
+			return rows > 0;
+		}
+		catch(Throwable t) {
+			log.error("Error on updating category");
+			throw t;
+		}
 	}
 
 	@Override

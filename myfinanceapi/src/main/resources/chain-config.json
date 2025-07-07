@@ -8,6 +8,7 @@
 		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.GetCategoryHandler",
 		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.GetCategoryListHandler",
 		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.PostCategoryHandler",
-		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.DeleteCategoryHandler"
+		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.DeleteCategoryHandler",
+		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.PutCategoryHandler"
 	]
 }
