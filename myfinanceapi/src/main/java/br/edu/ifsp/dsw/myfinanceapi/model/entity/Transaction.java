@@ -15,6 +15,10 @@ public class Transaction {
 	
 	public Transaction() {}
 	
+	public Transaction(Integer id) {
+		this.id = id;
+	}
+
 	public Integer getId() {
 		return id;
 	}
