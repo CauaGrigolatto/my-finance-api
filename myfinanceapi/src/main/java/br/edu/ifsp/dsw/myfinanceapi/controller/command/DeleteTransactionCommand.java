@@ -36,7 +36,7 @@ public class DeleteTransactionCommand extends AbstractJsonCommand {
 			if (deletedSuccessfully) {
 				transactionDAO.commit();
 				log.info("Transaction deleted successfully", transaction);
-				response.setStatus(HttpStatus.SC_NO_CONTENT);				
+				response.setStatus(HttpStatus.SC_NO_CONTENT);
 			}
 			else {
 				transactionDAO.rollback();
