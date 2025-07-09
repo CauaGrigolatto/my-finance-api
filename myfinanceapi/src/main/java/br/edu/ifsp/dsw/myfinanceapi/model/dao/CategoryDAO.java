@@ -122,6 +122,10 @@ public class CategoryDAO extends BasicDAO<Category> {
 			    ps.setString(index++, "%" + categoryFilterDTO.getTitle() + "%");
 			}
 			
+			ps.setInt(index++, categoryFilterDTO.getLimit());
+
+			ps.setInt(index++, categoryFilterDTO.getOffset());
+			
 			ResultSet rs = ps.executeQuery();
 			
 			List<Category> categories = new LinkedList<Category>();
@@ -141,8 +145,35 @@ public class CategoryDAO extends BasicDAO<Category> {
 	
 	@Override
 	public long count(FilterDTO filter) throws Throwable {
-		// TODO Auto-generated method stub
-		return 0;
+		try {
+			CategoryFilterDTO categoryFilterDTO = (CategoryFilterDTO) filter;
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT COUNT(c.category_id) AS result ");
+			sql.append("FROM category c ");
+			sql.append(filter.buildWhere(true));
+			
+			int index = 1;
+			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			
+			if (StringUtils.isNotBlank(categoryFilterDTO.getTitle())) {
+			    ps.setString(index++, "%" + categoryFilterDTO.getTitle() + "%");
+			}
+			
+			ResultSet rs = ps.executeQuery();
+			
+			long result = 0;
+			
+			if (rs.next()) {
+				result = rs.getLong("result");
+			}
+			
+			return result;
+		}
+		catch(Throwable t) {
+			log.error("Error on counting by filter");
+			throw t;
+		}
 	}
 
 	@Override

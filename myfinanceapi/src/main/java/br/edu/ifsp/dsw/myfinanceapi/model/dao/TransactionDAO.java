@@ -239,7 +239,7 @@ public class TransactionDAO extends BasicDAO<Transaction> {
 			return result;
 		}
 		catch(Throwable t) {
-			log.error("Error on finding by filter");
+			log.error("Error on counting by filter");
 			throw t;
 		}
 	}

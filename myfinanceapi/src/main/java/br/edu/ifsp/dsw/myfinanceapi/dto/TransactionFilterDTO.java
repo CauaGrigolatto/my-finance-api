@@ -13,8 +13,8 @@ public class TransactionFilterDTO implements FilterDTO {
 	private Integer year;
 	private TransactionType type;
 	private Integer categoryId;
-	private Integer limit;
-	private Integer offset;
+	private int limit;
+	private int offset;
 	private int page;
 
 	public TransactionFilterDTO() {
@@ -109,20 +109,24 @@ public class TransactionFilterDTO implements FilterDTO {
 		this.categoryId = categoryId;
 	}
 
-	public Integer getLimit() {
-		return limit;
+	@Override
+	public void setOffset(int offset) {
+		this.offset = offset;
 	}
 
-	public void setLimit(Integer limit) {
-		this.limit = limit;
-	}
-
-	public Integer getOffset() {
+	@Override
+	public int getOffset() {
 		return offset;
 	}
 
-	public void setOffset(Integer offset) {
-		this.offset = offset;
+	@Override
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+
+	@Override
+	public int getLimit() {
+		return limit;
 	}
 
 	@Override

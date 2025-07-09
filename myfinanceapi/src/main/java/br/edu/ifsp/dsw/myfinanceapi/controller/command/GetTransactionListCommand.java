@@ -63,7 +63,6 @@ public class GetTransactionListCommand extends AbstractJsonCommand {
 			response.getWriter().write(json);
 		}
 		catch(Throwable t) {
-			transactionDAO.rollback();
 			log.error("Error on getting transaction list");
 			
 			ResponseDTO<Transaction> responseDTO = new ResponseDTO<Transaction>(
