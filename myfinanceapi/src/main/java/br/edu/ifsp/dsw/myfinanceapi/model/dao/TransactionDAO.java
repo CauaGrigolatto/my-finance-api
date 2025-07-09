@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class TransactionDAO extends BasicDAO<Transaction> {
 			ps.setBigDecimal(2, transaction.getValue());
 			ps.setString(3, transaction.getType().toString());
 			ps.setDate(4, new java.sql.Date(transaction.getDueDate().getTime()));
-			ps.setInt(5, transaction.getCategory().getId());
+			ps.setObject(5, transaction.getCategory() != null ? transaction.getCategory().getId() : null, Types.INTEGER);
 			
 			ps.executeUpdate();
 			ResultSet rs = ps.getGeneratedKeys();
