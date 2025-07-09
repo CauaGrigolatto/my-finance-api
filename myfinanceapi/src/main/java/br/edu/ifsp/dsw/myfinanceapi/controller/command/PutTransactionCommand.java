@@ -8,7 +8,7 @@ import org.apache.http.HttpStatus;
 
 import br.edu.ifsp.dsw.myfinanceapi.dto.ErrorFieldDTO;
 import br.edu.ifsp.dsw.myfinanceapi.dto.ResponseDTO;
-import br.edu.ifsp.dsw.myfinanceapi.model.dao.TransactionDAO;
+import br.edu.ifsp.dsw.myfinanceapi.model.dao.TransactionDAOImpl;
 import br.edu.ifsp.dsw.myfinanceapi.model.database.ConnectionFactory;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Transaction;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,12 +16,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class PutTransactionCommand extends AbstractJsonCommand {
 	
-	private TransactionDAO transactionDAO;
+	private TransactionDAOImpl transactionDAO;
 	
 	public PutTransactionCommand() throws Throwable {
 		super();
 		Connection conn = ConnectionFactory.getConnection();
-		this.transactionDAO = new TransactionDAO(conn);
+		this.transactionDAO = new TransactionDAOImpl(conn);
 	}
 	
 	@Override

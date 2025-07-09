@@ -1,5 +1,8 @@
 {
 	"chain": [
+		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.GetExpensesSumHandler",
+		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.GetRevenuesSumHandler",
+		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.GetBalanceHandler",
 		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.GetTransactionHandler",
 		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.GetTransactionListHandler",
 		"br.edu.ifsp.dsw.myfinanceapi.controller.handler.PostTransactionHandler",

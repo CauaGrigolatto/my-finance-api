@@ -5,8 +5,8 @@ import java.sql.Connection;
 import org.apache.http.HttpStatus;
 
 import br.edu.ifsp.dsw.myfinanceapi.dto.ResponseDTO;
-import br.edu.ifsp.dsw.myfinanceapi.model.dao.CategoryDAO;
-import br.edu.ifsp.dsw.myfinanceapi.model.dao.TransactionDAO;
+import br.edu.ifsp.dsw.myfinanceapi.model.dao.CategoryDAOImpl;
+import br.edu.ifsp.dsw.myfinanceapi.model.dao.TransactionDAOImpl;
 import br.edu.ifsp.dsw.myfinanceapi.model.database.ConnectionFactory;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Category;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Transaction;
@@ -15,14 +15,14 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class GetTransactionCommand extends AbstractJsonCommand {
 	
-	private TransactionDAO transactionDAO;
-	private CategoryDAO categoryDAO;
+	private TransactionDAOImpl transactionDAO;
+	private CategoryDAOImpl categoryDAO;
 	
 	public GetTransactionCommand() throws Throwable {
 		super();
 		Connection conn = ConnectionFactory.getConnection();
-		this.transactionDAO = new TransactionDAO(conn);
-		this.categoryDAO = new CategoryDAO(conn);
+		this.transactionDAO = new TransactionDAOImpl(conn);
+		this.categoryDAO = new CategoryDAOImpl(conn);
 	}
 	
 	@Override

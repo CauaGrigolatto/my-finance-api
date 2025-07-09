@@ -10,7 +10,7 @@ import org.apache.http.HttpStatus;
 import br.edu.ifsp.dsw.myfinanceapi.dto.CategoryFilterDTO;
 import br.edu.ifsp.dsw.myfinanceapi.dto.PaginatedResponseDTO;
 import br.edu.ifsp.dsw.myfinanceapi.dto.ResponseDTO;
-import br.edu.ifsp.dsw.myfinanceapi.model.dao.CategoryDAO;
+import br.edu.ifsp.dsw.myfinanceapi.model.dao.CategoryDAOImpl;
 import br.edu.ifsp.dsw.myfinanceapi.model.database.ConnectionFactory;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Category;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Transaction;
@@ -19,12 +19,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class GetCategoryListCommand extends AbstractJsonCommand {
 	
-	private CategoryDAO categoryDAO;
+	private CategoryDAOImpl categoryDAO;
 	
 	public GetCategoryListCommand() throws Throwable {
 		super();
 		Connection conn = ConnectionFactory.getConnection();
-		this.categoryDAO = new CategoryDAO(conn);
+		this.categoryDAO = new CategoryDAOImpl(conn);
 	}
 	
 	@Override

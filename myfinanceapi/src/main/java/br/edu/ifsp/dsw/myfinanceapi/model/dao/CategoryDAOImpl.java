@@ -12,9 +12,9 @@ import br.edu.ifsp.dsw.myfinanceapi.dto.CategoryFilterDTO;
 import br.edu.ifsp.dsw.myfinanceapi.dto.FilterDTO;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Category;
 
-public class CategoryDAO extends BasicDAO<Category> {
+public class CategoryDAOImpl extends BasicDAO<Category> {
 	
-	public CategoryDAO(Connection conn) throws Throwable {
+	public CategoryDAOImpl(Connection conn) throws Throwable {
 		super(conn);
 	}
 

@@ -1,58 +1,43 @@
 package br.edu.ifsp.dsw.myfinanceapi.controller.command;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 
 import org.apache.http.HttpStatus;
 
 import br.edu.ifsp.dsw.myfinanceapi.dto.ResponseDTO;
-import br.edu.ifsp.dsw.myfinanceapi.model.dao.CategoryDAOImpl;
+import br.edu.ifsp.dsw.myfinanceapi.model.dao.TransactionDAOImpl;
 import br.edu.ifsp.dsw.myfinanceapi.model.database.ConnectionFactory;
-import br.edu.ifsp.dsw.myfinanceapi.model.entity.Category;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Transaction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class GetCategoryCommand extends AbstractJsonCommand {
+public class GetExpensesSumCommand extends AbstractJsonCommand {
 	
-	private CategoryDAOImpl categoryDAO;
+	private TransactionDAOImpl transactionDAO;
 	
-	public GetCategoryCommand() throws Throwable {
+	public GetExpensesSumCommand() throws Throwable {
 		super();
 		Connection conn = ConnectionFactory.getConnection();
-		this.categoryDAO = new CategoryDAOImpl(conn);
+		this.transactionDAO = new TransactionDAOImpl(conn);
 	}
 	
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws Throwable {
 		try {
-			String[] parts = request.getPathInfo().split("/");
-			String idStr = parts[2];
-			Integer id = Integer.valueOf(idStr);
+			ResponseDTO<BigDecimal> responseDTO;
 			
-			ResponseDTO<Category> responseDTO;
-			Category category = categoryDAO.findById(id);
+			BigDecimal expenses = transactionDAO.sumExpenses();
 			
-			if (category == null) {
-				responseDTO = new ResponseDTO<Category>(
-					HttpStatus.SC_NOT_FOUND,
-					"Category with ID " + id + " not found.",
-					null,
-					null
-				);
-				
-				response.setStatus(HttpStatus.SC_NOT_FOUND);
-			}
-			else {
-				responseDTO = new ResponseDTO<Category>(
-					HttpStatus.SC_OK,
-					null,
-					category,
-					null
-				);
-				
-				log.info("Category consulted successfully", category);
-				response.setStatus(HttpStatus.SC_OK);
-			}
+			responseDTO = new ResponseDTO<BigDecimal>(
+				HttpStatus.SC_OK,
+				"Expenses added successfully.",
+				expenses,
+				null
+			);
+			
+			log.info("Expenses added successfully", expenses);
+			response.setStatus(HttpStatus.SC_OK);
 			
 			String json = gson.toJson(responseDTO);
 			response.setContentType("application/json");
@@ -76,7 +61,7 @@ public class GetCategoryCommand extends AbstractJsonCommand {
 			throw t;
 		}
 		finally {			
-			categoryDAO.rollback();
+			transactionDAO.rollback();
 		}
 	}
 }
