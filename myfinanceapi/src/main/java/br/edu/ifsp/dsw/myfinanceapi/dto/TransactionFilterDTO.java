@@ -15,6 +15,7 @@ public class TransactionFilterDTO implements FilterDTO {
 	private Integer categoryId;
 	private Integer limit;
 	private Integer offset;
+	private int page;
 
 	public TransactionFilterDTO() {
 		this.month = -1;
@@ -25,7 +26,7 @@ public class TransactionFilterDTO implements FilterDTO {
 	}
 
 	@Override
-	public String buildWhere() {
+	public String buildWhere(boolean isCount) {
 		StringBuilder where = new StringBuilder();
 		where.append("WHERE 1 = 1");
 
@@ -52,8 +53,10 @@ public class TransactionFilterDTO implements FilterDTO {
 		if (categoryId != null && categoryId != -1) {
 			where.append(" AND t.category_id = ?");
 		}
-
-		where.append(" LIMIT ? OFFSET ?");
+		
+		if (! isCount) {
+			where.append(" LIMIT ? OFFSET ?");			
+		}
 
 		return where.toString();
 	}
@@ -120,5 +123,15 @@ public class TransactionFilterDTO implements FilterDTO {
 
 	public void setOffset(Integer offset) {
 		this.offset = offset;
+	}
+
+	@Override
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	@Override
+	public int getPage() {
+		return page;
 	}
 }

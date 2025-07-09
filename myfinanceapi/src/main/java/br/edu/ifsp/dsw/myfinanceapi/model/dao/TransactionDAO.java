@@ -140,7 +140,7 @@ public class TransactionDAO extends BasicDAO<Transaction> {
 			sql.append("t.due_date AS dueDate, ");
 			sql.append("t.category_id AS categoryId ");
 			sql.append("FROM transaction t ");
-			sql.append(transactionFilterDTO.buildWhere());
+			sql.append(transactionFilterDTO.buildWhere(false));
 			
 			int index = 1;
 			PreparedStatement ps = conn.prepareStatement(sql.toString());
@@ -190,6 +190,59 @@ public class TransactionDAO extends BasicDAO<Transaction> {
 		}
 	}
 	
+	@Override
+	public long count(FilterDTO filterDTO) throws Throwable {
+		try {
+			TransactionFilterDTO transactionFilterDTO = (TransactionFilterDTO) filterDTO;
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT COUNT(t.transaction_id) AS result ");
+			sql.append("FROM transaction t ");
+			sql.append(transactionFilterDTO.buildWhere(true));
+			
+			int index = 1;
+			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			
+			if (StringUtils.isNotBlank(transactionFilterDTO.getDescription())) {
+			    ps.setString(index++, "%" + transactionFilterDTO.getDescription() + "%");
+			}
+
+			if (transactionFilterDTO.getValue() != null) {
+			    ps.setBigDecimal(index++, transactionFilterDTO.getValue());
+			}
+
+			if (transactionFilterDTO.getMonth() != null && transactionFilterDTO.getMonth() != -1) {
+			    ps.setInt(index++, transactionFilterDTO.getMonth());
+			}
+
+			if (transactionFilterDTO.getYear() != null && transactionFilterDTO.getYear() != -1) {
+			    ps.setInt(index++, transactionFilterDTO.getYear());
+			}
+
+			if (transactionFilterDTO.getType() != null) {
+			    ps.setString(index++, transactionFilterDTO.getType().name());
+			}
+
+			if (transactionFilterDTO.getCategoryId() != null && transactionFilterDTO.getCategoryId() != -1) {
+			    ps.setInt(index++, transactionFilterDTO.getCategoryId());
+			}
+
+			ResultSet rs = ps.executeQuery();
+			
+			long result = 0;
+			
+			if (rs.next()) {
+				result = rs.getLong("result");
+			}
+			
+			return result;
+		}
+		catch(Throwable t) {
+			log.error("Error on finding by filter");
+			throw t;
+		}
+	}
+
 	@Override
 	protected Transaction buildEntity(ResultSet resultSet) throws Throwable {
 		Integer transactionId = resultSet.getInt("transactionId");

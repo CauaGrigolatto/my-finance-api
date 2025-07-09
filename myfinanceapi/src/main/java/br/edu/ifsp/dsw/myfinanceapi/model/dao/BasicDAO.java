@@ -24,6 +24,7 @@ public abstract class BasicDAO<E> {
 	public abstract boolean delete(E entity) throws Throwable;
 	public abstract E findById(Integer id) throws Throwable;
 	public abstract List<E> findByFilter(FilterDTO filter) throws Throwable;
+	public abstract long count(FilterDTO filter) throws Throwable;
 	protected abstract E buildEntity(ResultSet resultSet) throws Throwable;
 	
 	public void commit() throws Throwable {

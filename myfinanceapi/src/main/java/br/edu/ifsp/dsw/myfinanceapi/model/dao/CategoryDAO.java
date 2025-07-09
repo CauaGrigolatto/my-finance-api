@@ -113,7 +113,7 @@ public class CategoryDAO extends BasicDAO<Category> {
 			sql.append("SELECT c.category_id AS categoryId, ");
 			sql.append("c.title AS title ");
 			sql.append("FROM category c ");
-			sql.append(filter.buildWhere());
+			sql.append(filter.buildWhere(false));
 			
 			int index = 1;
 			PreparedStatement ps = conn.prepareStatement(sql.toString());
@@ -139,6 +139,12 @@ public class CategoryDAO extends BasicDAO<Category> {
 		}
 	}
 	
+	@Override
+	public long count(FilterDTO filter) throws Throwable {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	@Override
 	protected Category buildEntity(ResultSet resultSet) throws Throwable {
 		Category category = new Category();

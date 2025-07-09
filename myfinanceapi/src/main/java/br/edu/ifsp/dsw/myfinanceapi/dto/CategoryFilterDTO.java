@@ -10,7 +10,7 @@ public class CategoryFilterDTO implements FilterDTO {
 	}
 
 	@Override
-	public String buildWhere() {
+	public String buildWhere(boolean isCount) {
 		StringBuilder where = new StringBuilder();
 		where.append("WHERE 1 = 1");
 
@@ -27,5 +27,17 @@ public class CategoryFilterDTO implements FilterDTO {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	@Override
+	public void setPage(int page) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getPage() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

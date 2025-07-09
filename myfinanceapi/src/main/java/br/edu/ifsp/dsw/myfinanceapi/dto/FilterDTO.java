@@ -1,5 +1,7 @@
 package br.edu.ifsp.dsw.myfinanceapi.dto;
 
 public interface FilterDTO {
-	String buildWhere();
+	void setPage(int page);
+	int getPage();
+	String buildWhere(boolean isCount);
 }
