@@ -41,6 +41,8 @@ public class PutTransactionCommand extends AbstractJsonCommand {
 			ResponseDTO<Transaction> responseDTO;
 			
 			if (transactionToUpdate == null) {
+				transactionDAO.rollback();
+				
 				responseDTO = new ResponseDTO<Transaction>(
 					HttpStatus.SC_NOT_FOUND,
 					"Could not update transaction. Please, check if it still exists.",
