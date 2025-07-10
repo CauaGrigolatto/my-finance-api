@@ -11,7 +11,7 @@ public class GetRevenuesSumHandler extends AbstractHandler {
 		
 		String pathInfo = request.getPathInfo();
 		
-		boolean isValidPath = pathInfo != null && pathInfo.matches("^/transaction/revenues-sum$");
+		boolean isValidPath = pathInfo != null && (pathInfo.matches("^/transaction/revenues-sum$") || pathInfo.matches("^/transaction/revenues-sum/\\d+$"));
 		
 		boolean hasBody = request.getContentLength() > 0 || request.getContentLength() == -1;
 		

@@ -9,6 +9,7 @@ import java.sql.Types;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -265,19 +266,29 @@ public class TransactionDAOImpl extends BasicDAO<Transaction> implements Transac
 	}
 
 	@Override
-	public BigDecimal sumExpenses() throws Throwable {
+	public BigDecimal sumExpenses(Category category) throws Throwable {
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append("SELECT SUM(t.value) as expensesSum ");
 			sql.append("FROM transaction t ");
 			sql.append("WHERE t.type = 'EXPENSE' ");
+			
+			if (category != null) {
+				sql.append("AND t.category_id = ? ");
+			}
+			
 			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			
+			if (category != null) {
+				ps.setInt(1, category.getId());
+			}
+			
 			ResultSet rs = ps.executeQuery();
 			
 			BigDecimal expensesSum = BigDecimal.ZERO;
 			
 			if (rs.next()) {
-				expensesSum = rs.getBigDecimal("expensesSum");
+				expensesSum = Optional.ofNullable(rs.getBigDecimal("expensesSum")).orElse(BigDecimal.ZERO);
 			}
 			
 			return expensesSum.multiply(BigDecimal.valueOf(-1));
@@ -289,19 +300,29 @@ public class TransactionDAOImpl extends BasicDAO<Transaction> implements Transac
 	}
 
 	@Override
-	public BigDecimal sumRevenues() throws Throwable {
+	public BigDecimal sumRevenues(Category category) throws Throwable {
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append("SELECT SUM(t.value) as revenuesSum ");
 			sql.append("FROM transaction t ");
 			sql.append("WHERE t.type = 'REVENUE' ");
+			
+			if (category != null) {
+				sql.append("AND t.category_id = ? ");
+			}
+			
 			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			
+			if (category != null) {
+				ps.setInt(1, category.getId());
+			}
+			
 			ResultSet rs = ps.executeQuery();
 			
 			BigDecimal revenuesSum = BigDecimal.ZERO;
 			
 			if (rs.next()) {
-				revenuesSum = rs.getBigDecimal("revenuesSum");
+				revenuesSum = Optional.ofNullable(rs.getBigDecimal("revenuesSum")).orElse(BigDecimal.ZERO);;
 			}
 			
 			return revenuesSum;
@@ -315,8 +336,8 @@ public class TransactionDAOImpl extends BasicDAO<Transaction> implements Transac
 	@Override
 	public BigDecimal getBalance() throws Throwable {
 		try {
-			BigDecimal revenues = sumRevenues();
-			BigDecimal expenses = sumExpenses();
+			BigDecimal revenues = sumRevenues(null);
+			BigDecimal expenses = sumExpenses(null);
 			return revenues.add(expenses);
 		}
 		catch(Throwable t) {

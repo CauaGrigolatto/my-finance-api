@@ -8,6 +8,7 @@ import org.apache.http.HttpStatus;
 import br.edu.ifsp.dsw.myfinanceapi.dto.ResponseDTO;
 import br.edu.ifsp.dsw.myfinanceapi.model.dao.TransactionDAOImpl;
 import br.edu.ifsp.dsw.myfinanceapi.model.database.ConnectionFactory;
+import br.edu.ifsp.dsw.myfinanceapi.model.entity.Category;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Transaction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,9 +26,18 @@ public class GetRevenuesSumCommand extends AbstractJsonCommand {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws Throwable {
 		try {
+			Category category = null;
+			String[] parts = request.getPathInfo().split("/");
+
+			if (parts.length == 4) {
+				String categoryIdStr = parts[3];
+				Integer categoryId = Integer.valueOf(categoryIdStr);
+				category = new Category(categoryId);
+			}
+			
 			ResponseDTO<BigDecimal> responseDTO;
 			
-			BigDecimal revenues = transactionDAO.sumRevenues();
+			BigDecimal revenues = transactionDAO.sumRevenues(category);
 			
 			responseDTO = new ResponseDTO<BigDecimal>(
 				HttpStatus.SC_OK,
