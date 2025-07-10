@@ -8,9 +8,14 @@ public class GetCategoryHandler extends AbstractHandler {
 	@Override
 	protected boolean canHandle(HttpServletRequest request) {
 		boolean isGet = request.getMethod().equals("GET");
-		boolean isPath = request.getPathInfo().equals("/category");
-		boolean hasId = request.getParameter("id") != null;
-		return  isGet && isPath && hasId;
+		
+		String pathInfo = request.getPathInfo();
+		
+		boolean isValidPath = pathInfo != null && pathInfo.matches("^/category/\\d+$");
+		
+		boolean hasBody = request.getContentLength() > 0 || request.getContentLength() == -1;
+		
+		return  isGet && isValidPath && hasBody;
 	}
 	
 	@Override

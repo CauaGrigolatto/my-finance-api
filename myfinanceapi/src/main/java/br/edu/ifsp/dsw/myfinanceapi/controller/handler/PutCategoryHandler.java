@@ -1,25 +1,25 @@
 package br.edu.ifsp.dsw.myfinanceapi.controller.handler;
 
-import br.edu.ifsp.dsw.myfinanceapi.controller.command.DeleteCategoryCommand;
+import br.edu.ifsp.dsw.myfinanceapi.controller.command.PutCategoryCommand;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class DeleteCategoryHandler extends AbstractHandler {
+public class PutCategoryHandler extends AbstractHandler {
 	@Override
 	protected boolean canHandle(HttpServletRequest request) {
-		boolean isDelete = request.getMethod().equals("DELETE");
+		boolean isPost = "PUT".equalsIgnoreCase(request.getMethod());
 		
 		String pathInfo = request.getPathInfo();
 		
 		boolean isValidPath = pathInfo != null && pathInfo.matches("^/category/\\d+$");
 		
-		boolean hasBody = request.getContentLength() > 0 || request.getContentLength() == -1;
+	    boolean hasBody = request.getContentLength() > 0 || request.getContentLength() == -1;
 		
-		return isDelete && isValidPath && hasBody;
+		return isPost && isValidPath && hasBody;
 	}
-	
+
 	@Override
 	protected void proccess(HttpServletRequest request, HttpServletResponse response) throws Throwable {
-		new DeleteCategoryCommand().execute(request, response);
+		new PutCategoryCommand().execute(request, response);
 	}
 }

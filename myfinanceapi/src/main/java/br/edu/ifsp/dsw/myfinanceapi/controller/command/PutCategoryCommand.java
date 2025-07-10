@@ -1,9 +1,12 @@
 package br.edu.ifsp.dsw.myfinanceapi.controller.command;
 
 import java.sql.Connection;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.http.HttpStatus;
 
+import br.edu.ifsp.dsw.myfinanceapi.dto.ErrorFieldDTO;
 import br.edu.ifsp.dsw.myfinanceapi.dto.ResponseDTO;
 import br.edu.ifsp.dsw.myfinanceapi.model.dao.CategoryDAOImpl;
 import br.edu.ifsp.dsw.myfinanceapi.model.database.ConnectionFactory;
@@ -12,11 +15,11 @@ import br.edu.ifsp.dsw.myfinanceapi.model.entity.Transaction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class GetCategoryCommand extends AbstractJsonCommand {
+public class PutCategoryCommand extends AbstractJsonCommand {
 	
 	private CategoryDAOImpl categoryDAO;
 	
-	public GetCategoryCommand() throws Throwable {
+	public PutCategoryCommand() throws Throwable {
 		super();
 		Connection conn = ConnectionFactory.getConnection();
 		this.categoryDAO = new CategoryDAOImpl(conn);
@@ -29,13 +32,21 @@ public class GetCategoryCommand extends AbstractJsonCommand {
 			String idStr = parts[2];
 			Integer id = Integer.valueOf(idStr);
 			
-			ResponseDTO<Category> responseDTO;
-			Category category = categoryDAO.findById(id);
+			String json = toJson(request);
 			
-			if (category == null) {
+			Category category = gson.fromJson(json, Category.class);
+			category.setId(id);
+			
+			Category categoryToUpdate = categoryDAO.findById(id);
+			
+			ResponseDTO<Category> responseDTO;
+			
+			if (categoryToUpdate == null) {
+				categoryDAO.rollback();
+				
 				responseDTO = new ResponseDTO<Category>(
 					HttpStatus.SC_NOT_FOUND,
-					"Category with ID " + id + " not found.",
+					"Could not update category. Please, check if it still exists.",
 					null,
 					null
 				);
@@ -43,23 +54,48 @@ public class GetCategoryCommand extends AbstractJsonCommand {
 				response.setStatus(HttpStatus.SC_NOT_FOUND);
 			}
 			else {
-				responseDTO = new ResponseDTO<Category>(
-					HttpStatus.SC_OK,
-					null,
-					category,
-					null
-				);
+				List<ErrorFieldDTO> errors = new LinkedList<ErrorFieldDTO>();
+			
+				if (category.getTitle() == null) {
+					ErrorFieldDTO error = new ErrorFieldDTO("title", "Title cannot be empty.");
+					errors.add(error);
+				}
 				
-				log.info("Category consulted successfully", category);
-				response.setStatus(HttpStatus.SC_OK);
+				if (! errors.isEmpty()) {
+					categoryDAO.rollback();
+					
+					responseDTO = new ResponseDTO<Category>(
+						HttpStatus.SC_BAD_REQUEST,
+						"Request validation failed.",
+						null,
+						errors
+					);
+					
+					response.setStatus(HttpStatus.SC_BAD_REQUEST);
+				}
+				else {
+					categoryDAO.update(category);
+					log.info("Category updated successfully", category);
+					categoryDAO.commit();
+					
+					responseDTO = new ResponseDTO<Category>(
+						HttpStatus.SC_OK,
+						"Category updated successfully.",
+						category,
+						null
+					);
+					
+					response.setStatus(HttpStatus.SC_OK);
+				}
 			}
 			
-			String json = gson.toJson(responseDTO);
+			String responnseJson = gson.toJson(responseDTO);
 			response.setContentType("application/json");
-			response.getWriter().write(json);
+			response.getWriter().write(responnseJson);
 		}
 		catch(Throwable t) {
-			log.error("Error on retrieving transactions");
+			categoryDAO.rollback();
+			log.error("Error on category update");
 			
 			ResponseDTO<Transaction> responseDTO = new ResponseDTO<Transaction>(
 				HttpStatus.SC_INTERNAL_SERVER_ERROR,
@@ -74,9 +110,6 @@ public class GetCategoryCommand extends AbstractJsonCommand {
 			
 			response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
 			throw t;
-		}
-		finally {			
-			categoryDAO.rollback();
 		}
 	}
 }

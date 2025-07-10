@@ -12,9 +12,9 @@ import br.edu.ifsp.dsw.myfinanceapi.dto.CategoryFilterDTO;
 import br.edu.ifsp.dsw.myfinanceapi.dto.FilterDTO;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Category;
 
-public class CategoryDAO extends BasicDAO<Category> {
+public class CategoryDAOImpl extends BasicDAO<Category> {
 	
-	public CategoryDAO(Connection conn) throws Throwable {
+	public CategoryDAOImpl(Connection conn) throws Throwable {
 		super(conn);
 	}
 
@@ -35,6 +35,29 @@ public class CategoryDAO extends BasicDAO<Category> {
 		}
 		catch(Throwable t) {
 			log.error("Error on saving category");
+			throw t;
+		}
+	}
+	
+	@Override
+	public boolean update(Category category) throws Throwable {
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE category SET ");
+			sql.append("title = ? ");
+//			sql.append(❤️)
+			sql.append("WHERE category_id = ? ");
+			
+			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			ps.setString(1, category.getTitle());
+			ps.setInt(2, category.getId());
+			
+			int rows = ps.executeUpdate();
+			
+			return rows > 0;
+		}
+		catch(Throwable t) {
+			log.error("Error on updating category");
 			throw t;
 		}
 	}
@@ -90,7 +113,7 @@ public class CategoryDAO extends BasicDAO<Category> {
 			sql.append("SELECT c.category_id AS categoryId, ");
 			sql.append("c.title AS title ");
 			sql.append("FROM category c ");
-			sql.append(filter.buildWhere());
+			sql.append(filter.buildWhere(false));
 			
 			int index = 1;
 			PreparedStatement ps = conn.prepareStatement(sql.toString());
@@ -98,6 +121,10 @@ public class CategoryDAO extends BasicDAO<Category> {
 			if (StringUtils.isNotBlank(categoryFilterDTO.getTitle())) {
 			    ps.setString(index++, "%" + categoryFilterDTO.getTitle() + "%");
 			}
+			
+			ps.setInt(index++, categoryFilterDTO.getLimit());
+
+			ps.setInt(index++, categoryFilterDTO.getOffset());
 			
 			ResultSet rs = ps.executeQuery();
 			
@@ -116,6 +143,39 @@ public class CategoryDAO extends BasicDAO<Category> {
 		}
 	}
 	
+	@Override
+	public long count(FilterDTO filter) throws Throwable {
+		try {
+			CategoryFilterDTO categoryFilterDTO = (CategoryFilterDTO) filter;
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT COUNT(c.category_id) AS result ");
+			sql.append("FROM category c ");
+			sql.append(filter.buildWhere(true));
+			
+			int index = 1;
+			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			
+			if (StringUtils.isNotBlank(categoryFilterDTO.getTitle())) {
+			    ps.setString(index++, "%" + categoryFilterDTO.getTitle() + "%");
+			}
+			
+			ResultSet rs = ps.executeQuery();
+			
+			long result = 0;
+			
+			if (rs.next()) {
+				result = rs.getLong("result");
+			}
+			
+			return result;
+		}
+		catch(Throwable t) {
+			log.error("Error on counting by filter");
+			throw t;
+		}
+	}
+
 	@Override
 	protected Category buildEntity(ResultSet resultSet) throws Throwable {
 		Category category = new Category();

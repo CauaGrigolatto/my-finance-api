@@ -1,25 +1,25 @@
 package br.edu.ifsp.dsw.myfinanceapi.controller.handler;
 
-import br.edu.ifsp.dsw.myfinanceapi.controller.command.GetTransactionCommand;
+import br.edu.ifsp.dsw.myfinanceapi.controller.command.PutTransactionCommand;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class GetTransactionHandler extends AbstractHandler {
+public class PutTransactionHandler extends AbstractHandler {
 	@Override
 	protected boolean canHandle(HttpServletRequest request) {
-		boolean isGet = request.getMethod().equals("GET");
+		boolean isPost = "PUT".equalsIgnoreCase(request.getMethod());
 		
 		String pathInfo = request.getPathInfo();
 		
 		boolean isValidPath = pathInfo != null && pathInfo.matches("^/transaction/\\d+$");
 		
-		boolean hasBody = request.getContentLength() > 0 || request.getContentLength() == -1;
+	    boolean hasBody = request.getContentLength() > 0 || request.getContentLength() == -1;
 		
-		return isGet && isValidPath && hasBody;		
+		return isPost && isValidPath && hasBody;
 	}
-	
+
 	@Override
 	protected void proccess(HttpServletRequest request, HttpServletResponse response) throws Throwable {
-		new GetTransactionCommand().execute(request, response);
+		new PutTransactionCommand().execute(request, response);
 	}
 }

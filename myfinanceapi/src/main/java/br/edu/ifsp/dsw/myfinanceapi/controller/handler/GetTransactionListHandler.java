@@ -7,7 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class GetTransactionListHandler extends AbstractHandler {
 	@Override
 	protected boolean canHandle(HttpServletRequest request) {
-		return request.getMethod().equals("GET") && request.getPathInfo().equals("/transaction");
+		boolean isGet = request.getMethod().equals("GET");
+		boolean isValidPath = request.getPathInfo().equals("/transaction");
+		return isGet && isValidPath;
 	}
 	
 	@Override

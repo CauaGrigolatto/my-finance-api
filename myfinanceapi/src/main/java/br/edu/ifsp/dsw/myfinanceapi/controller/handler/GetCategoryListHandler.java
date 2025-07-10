@@ -7,7 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class GetCategoryListHandler extends AbstractHandler {
 	@Override
 	protected boolean canHandle(HttpServletRequest request) {
-		return request.getMethod().equals("GET") && request.getPathInfo().equals("/category");
+		boolean isGet = request.getMethod().equals("GET");
+		boolean isValidPath = request.getPathInfo().equals("/category");
+		return isGet && isValidPath;
 	}
 	
 	@Override

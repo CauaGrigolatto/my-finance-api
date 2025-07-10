@@ -7,7 +7,15 @@ import jakarta.servlet.http.HttpServletResponse;
 public class DeleteTransactionHandler extends AbstractHandler {
 	@Override
 	protected boolean canHandle(HttpServletRequest request) {
-		return request.getMethod().equals("DELETE") && request.getPathInfo().equals("/transaction") && request.getParameter("id") != null;
+		boolean isDelete = request.getMethod().equals("DELETE");
+		
+		String pathInfo = request.getPathInfo();
+		
+		boolean isValidPath = pathInfo != null && pathInfo.matches("^/transaction/\\d+$");
+		
+		boolean hasBody = request.getContentLength() > 0 || request.getContentLength() == -1;
+		
+		return isDelete && isValidPath && hasBody;
 	}
 	
 	@Override

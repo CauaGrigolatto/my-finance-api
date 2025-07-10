@@ -1,25 +1,25 @@
 package br.edu.ifsp.dsw.myfinanceapi.controller.handler;
 
-import br.edu.ifsp.dsw.myfinanceapi.controller.command.DeleteCategoryCommand;
+import br.edu.ifsp.dsw.myfinanceapi.controller.command.GetRevenuesSumCommand;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class DeleteCategoryHandler extends AbstractHandler {
+public class GetRevenuesSumHandler extends AbstractHandler {
 	@Override
 	protected boolean canHandle(HttpServletRequest request) {
-		boolean isDelete = request.getMethod().equals("DELETE");
+		boolean isGet = request.getMethod().equals("GET");
 		
 		String pathInfo = request.getPathInfo();
 		
-		boolean isValidPath = pathInfo != null && pathInfo.matches("^/category/\\d+$");
+		boolean isValidPath = pathInfo != null && (pathInfo.matches("^/transaction/revenues-sum$") || pathInfo.matches("^/transaction/revenues-sum/\\d+$"));
 		
 		boolean hasBody = request.getContentLength() > 0 || request.getContentLength() == -1;
 		
-		return isDelete && isValidPath && hasBody;
+		return  isGet && isValidPath && hasBody;
 	}
 	
 	@Override
 	protected void proccess(HttpServletRequest request, HttpServletResponse response) throws Throwable {
-		new DeleteCategoryCommand().execute(request, response);
+		new GetRevenuesSumCommand().execute(request, response);
 	}
 }
