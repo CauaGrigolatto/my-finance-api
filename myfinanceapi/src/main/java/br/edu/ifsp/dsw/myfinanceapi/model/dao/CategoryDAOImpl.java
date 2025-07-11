@@ -122,9 +122,10 @@ public class CategoryDAOImpl extends BasicDAO<Category> {
 			    ps.setString(index++, "%" + categoryFilterDTO.getTitle() + "%");
 			}
 			
-			ps.setInt(index++, categoryFilterDTO.getLimit());
-
-			ps.setInt(index++, categoryFilterDTO.getOffset());
+			if (! categoryFilterDTO.isUnpaged()) {				
+				ps.setInt(index++, categoryFilterDTO.getLimit());
+				ps.setInt(index++, categoryFilterDTO.getOffset());
+			}
 			
 			ResultSet rs = ps.executeQuery();
 			

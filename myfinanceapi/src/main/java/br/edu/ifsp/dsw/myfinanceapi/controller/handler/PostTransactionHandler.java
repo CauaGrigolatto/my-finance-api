@@ -10,7 +10,6 @@ public class PostTransactionHandler extends AbstractHandler {
 		boolean isPost = "POST".equalsIgnoreCase(request.getMethod());
 		boolean isPath = "/transaction".equals(request.getPathInfo());
 		boolean isJson = "application/json".equalsIgnoreCase(request.getContentType());
-
 		boolean hasBody = request.getContentLength() > 0 || request.getContentLength() == -1;
 
 		return isPost && isPath && isJson && hasBody;

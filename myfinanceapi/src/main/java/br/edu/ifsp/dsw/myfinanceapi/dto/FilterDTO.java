@@ -7,5 +7,7 @@ public interface FilterDTO {
 	int getLimit();
 	int getPage();
 	void setPage(int page);
+	boolean isUnpaged();
+	void setUnpaged(boolean unpaged);
 	String buildWhere(boolean isCount);
 }

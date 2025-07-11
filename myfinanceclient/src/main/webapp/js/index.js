@@ -3,31 +3,36 @@
 
 $(document).ready(function() {
 	loadTransactions();
+	loadCategories();
+
+	$('#addTransactionModal #btn-save-transaction').on('click', function() {
+		saveTransaction();
+	});
 });
 
 function loadTransactions(page = 1) {
 	$.ajax({
 		url: 'http://localhost:15433/myfinanceapi/transaction',
-		data: {page, pageSize: 5},
+		data: { page, pageSize: 5 },
 		method: 'GET'
 	})
-	.done(function(response) {
-		clearTransactionsList();
-		listTransactions(response.data);
-		setPaginationIndexes(response);
-	})
-	.fail(function() {
-		
-	});
+		.done(function(response) {
+			clearTransactionsList();
+			listTransactions(response.data);
+			setPaginationIndexes(response);
+		})
+		.fail(function() {
+
+		});
 }
 
 function clearTransactionsList() {
 	$('#transaction-list .list-group').empty();
-} 
+}
 
 function listTransactions(transactions) {
 	$(transactions).each(function() {
-		appendTransaction($(this)[0]);		
+		appendTransaction($(this)[0]);
 	});
 }
 
@@ -37,38 +42,40 @@ function appendTransaction(transaction) {
 }
 
 function functionCreateTransactionListItem(transaction) {
-	   const itemClass = transaction.type === 'REVENUE' ? 'revenue-item' : 'expense-item';
-	   const textColor = transaction.type === 'REVENUE' ? 'text-success' : 'text-warning';
-	   const valuePrefix = transaction.type === 'REVENUE' ? '' : '- ';
-	   
-	   const formattedValue = valuePrefix + 'R$ ' + parseFloat(transaction.value).toFixed(2).replace('.', ',');
-	   
-	   const listItem = $(`
-           <div class="list-group-item transaction-item ${itemClass} bg-transparent text-light border-0 border-bottom mb-2">
-               <div class="d-flex w-100 justify-content-between align-items-center">
-                   <div>
-                       <h6 class="mb-1">${transaction.description}</h6>
-                       <small class="text-muted">Categoria: ${transaction.category?.title}</small>
-                   </div>
-                   <div class="text-end">
-                       <span class="fw-bold ${textColor}">${formattedValue}</span>
-                       <div class="dropdown d-inline-block ms-3">
-                           <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                               <i class="bi bi-three-dots-vertical"></i>
-                           </button>
-                           <ul class="dropdown-menu dropdown-menu-end">
-                               <li><a class="dropdown-item edit-btn" href="#" data-id="${transaction.id}"><i class="bi bi-pencil me-2"></i>Editar</a></li>
-                               <li><a class="dropdown-item text-danger delete-btn" href="#" data-id="${transaction.id}"><i class="bi bi-trash me-2"></i>Excluir</a></li>
-                           </ul>
-                       </div>
-                   </div>
-               </div>
-           </div>
-       `);
-       
-       return listItem;
-}
+	const itemClass = transaction.type === 'REVENUE' ? 'revenue-item' : 'expense-item';
+	const textColor = transaction.type === 'REVENUE' ? 'text-success' : 'text-warning';
+	const valuePrefix = transaction.type === 'REVENUE' ? '' : '- ';
 
+	const formattedValue = valuePrefix + 'R$ ' + parseFloat(transaction.value).toFixed(2).replace('.', ',');
+
+	const listItem = $(`
+        <div class="list-group-item transaction-item ${itemClass} bg-transparent text-light border-0 border-bottom mb-2">
+            <div class="d-flex w-100 justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-1">${transaction.description}</h6>
+                    <div class="d-flex flex-column">
+                        <small class="text-muted">Categoria: ${transaction.category?.title || 'Sem categoria'}</small>
+                        <small class="text-muted">Vencimento: ${transaction.dueDate}</small>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <span class="fw-bold ${textColor}">${formattedValue}</span>
+                    <div class="dropdown d-inline-block ms-3">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item edit-btn" href="#" data-id="${transaction.id}"><i class="bi bi-pencil me-2"></i>Editar</a></li>
+                            <li><a class="dropdown-item text-danger delete-btn" href="#" data-id="${transaction.id}"><i class="bi bi-trash me-2"></i>Excluir</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `);
+
+	return listItem;
+}
 function setPaginationIndexes(apiResponse) {
 	const pagination = $('.pagination');
 	pagination.empty(); // Limpa a paginação existente
@@ -117,15 +124,72 @@ function setPaginationIndexes(apiResponse) {
 	setIndexButtons(apiResponse);
 }
 
-function setIndexButtons(apiResponse) {	
+function setIndexButtons(apiResponse) {
 	$('.page-link').on('click', function(e) {
 		e.preventDefault();
 		const page = $(this).data('page') ||
 			($(this).attr('aria-label') === 'Next' ? apiResponse.page + 1 : apiResponse.page - 1);
-	
+
 		if (page >= 1 && page <= apiResponse.totalPages && page !== apiResponse.page) {
 			loadTransactions(page);
 		}
+	});
+}
+
+function saveTransaction() {
+	const modal = $('#addTransactionModal');
+	const form = modal.find('#save-transaction-form');
+
+	const formData = {};
+	$.each(form.serializeArray(), function(i, field) {
+		formData[field.name] = field.value;
+	});
+
+	const jsonData = JSON.stringify(formData);
+
+	$.ajax({
+		url: 'http://localhost:15433/myfinanceapi/transaction',
+		data: jsonData,
+		method: 'POST',
+		contentType: 'application/json',
+		dataType: 'json'
+	})
+		.done(function() {
+			form[0].reset();
+			modal.modal('hide');
+			loadTransactions(1);
+		})
+		.fail(function() {
+
+		})
+}
+
+function loadCategories() {
+	$.ajax({
+		url: 'http://localhost:15433/myfinanceapi/category',
+		data: { unpaged: true },
+		method: 'GET'
+	})
+		.done(function(response) {
+			setCategoriesModalAddTransaction(response.data);
+		})
+		.fail(function() {
+
+		});
+}
+
+function setCategoriesModalAddTransaction(categories) {
+	const modal = $('#addTransactionModal');
+	const selectCategories = modal.find('#category');
+
+	selectCategories.empty().append('<option value="" selected disabled>Selecione uma categoria</option>');
+
+	$(categories).each(function(index, category) {
+		selectCategories.append(
+			$('<option></option>')
+				.val(category.id)
+				.text(category.title)
+		);
 	});
 }
 

@@ -7,6 +7,7 @@ public class CategoryFilterDTO implements FilterDTO {
 	private int limit;
 	private int offset;
 	private int page;
+	private boolean unpaged;
 	
 	public CategoryFilterDTO() {
 	
@@ -50,6 +51,14 @@ public class CategoryFilterDTO implements FilterDTO {
 		return page;
 	}
 	
+	public boolean isUnpaged() {
+		return unpaged;
+	}
+
+	public void setUnpaged(boolean unpaged) {
+		this.unpaged = unpaged;
+	}
+
 	@Override
 	public String buildWhere(boolean isCount) {
 		StringBuilder where = new StringBuilder();
@@ -59,7 +68,7 @@ public class CategoryFilterDTO implements FilterDTO {
 			where.append(" AND c.title LIKE ?");
 		}
 		
-		if (! isCount) {
+		if (!isCount && !unpaged) {
 			where.append(" LIMIT ? OFFSET ?");			
 		}
 

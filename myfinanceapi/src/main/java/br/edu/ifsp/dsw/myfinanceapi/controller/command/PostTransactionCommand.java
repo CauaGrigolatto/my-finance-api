@@ -6,8 +6,12 @@ import java.util.List;
 
 import org.apache.http.HttpStatus;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import br.edu.ifsp.dsw.myfinanceapi.dto.ErrorFieldDTO;
 import br.edu.ifsp.dsw.myfinanceapi.dto.ResponseDTO;
+import br.edu.ifsp.dsw.myfinanceapi.model.adapter.TransactionAdapter;
 import br.edu.ifsp.dsw.myfinanceapi.model.dao.TransactionDAOImpl;
 import br.edu.ifsp.dsw.myfinanceapi.model.database.ConnectionFactory;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Transaction;
@@ -28,8 +32,13 @@ public class PostTransactionCommand extends AbstractJsonCommand {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws Throwable {
 		try {
 			String json = toJson(request);
-			Transaction transaction = gson.fromJson(json, Transaction.class);
-			
+
+			Gson transactionSerializer = new GsonBuilder()
+			    .registerTypeAdapter(Transaction.class, new TransactionAdapter())
+			    .create();
+
+			Transaction transaction = transactionSerializer.fromJson(json, Transaction.class);
+						
 			ResponseDTO<Transaction> responseDTO;
 			List<ErrorFieldDTO> errors = new LinkedList<ErrorFieldDTO>();
 			

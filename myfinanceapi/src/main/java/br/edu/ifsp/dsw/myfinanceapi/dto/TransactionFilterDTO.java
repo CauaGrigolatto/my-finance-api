@@ -16,6 +16,7 @@ public class TransactionFilterDTO implements FilterDTO {
 	private int limit;
 	private int offset;
 	private int page;
+	private boolean unpaged;
 
 	public TransactionFilterDTO() {
 		this.month = -1;
@@ -23,42 +24,6 @@ public class TransactionFilterDTO implements FilterDTO {
 		this.categoryId = -1;
 		this.limit = 10;
 		this.offset = 0;
-	}
-
-	@Override
-	public String buildWhere(boolean isCount) {
-		StringBuilder where = new StringBuilder();
-		where.append("WHERE 1 = 1");
-
-		if (StringUtils.isNotBlank(description)) {
-			where.append(" AND t.description LIKE ?");
-		}
-
-		if (value != null) {
-			where.append(" AND t.value = ?");
-		}
-
-		if (month != null && month != -1) {
-			where.append(" AND MONTH(t.due_date) = ?");
-		}
-
-		if (year != null && year != -1) {
-			where.append(" AND YEAR(t.due_date) = ?");
-		}
-
-		if (type != null) {
-			where.append(" AND t.type = ?");
-		}
-
-		if (categoryId != null && categoryId != -1) {
-			where.append(" AND t.category_id = ?");
-		}
-		
-		if (! isCount) {
-			where.append(" LIMIT ? OFFSET ?");			
-		}
-
-		return where.toString();
 	}
 
 	public String getDescription() {
@@ -137,5 +102,50 @@ public class TransactionFilterDTO implements FilterDTO {
 	@Override
 	public int getPage() {
 		return page;
+	}
+
+	public boolean isUnpaged() {
+		return unpaged;
+	}
+
+	public void setUnpaged(boolean unpaged) {
+		this.unpaged = unpaged;
+	}
+	
+	@Override
+	public String buildWhere(boolean isCount) {
+		StringBuilder where = new StringBuilder();
+		where.append("WHERE 1 = 1");
+
+		if (StringUtils.isNotBlank(description)) {
+			where.append(" AND t.description LIKE ?");
+		}
+
+		if (value != null) {
+			where.append(" AND t.value = ?");
+		}
+
+		if (month != null && month != -1) {
+			where.append(" AND MONTH(t.due_date) = ?");
+		}
+
+		if (year != null && year != -1) {
+			where.append(" AND YEAR(t.due_date) = ?");
+		}
+
+		if (type != null) {
+			where.append(" AND t.type = ?");
+		}
+
+		if (categoryId != null && categoryId != -1) {
+			where.append(" AND t.category_id = ?");
+		}
+				
+		if (! isCount) {
+			where.append(" ORDER BY t.transaction_id DESC");	
+			where.append(" LIMIT ? OFFSET ?");			
+		}
+
+		return where.toString();
 	}
 }

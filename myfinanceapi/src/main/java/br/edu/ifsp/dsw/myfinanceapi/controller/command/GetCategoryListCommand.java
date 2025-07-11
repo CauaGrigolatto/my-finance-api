@@ -38,10 +38,10 @@ public class GetCategoryListCommand extends AbstractJsonCommand {
 			PaginatedResponseDTO<Category> responseDTO = new PaginatedResponseDTO<Category>();
 			responseDTO.setStatus(HttpStatus.SC_OK);
 			responseDTO.setData(categories);
-			responseDTO.setPage(filter.getPage());
-			responseDTO.setPageSize(filter.getLimit());
+			responseDTO.setPage(filter.isUnpaged() ? -1 : filter.getPage());
+			responseDTO.setPageSize(filter.isUnpaged() ? -1 : filter.getLimit());
 			responseDTO.setTotalItems(count);
-			responseDTO.setTotalPages((int) Math.ceilDiv(count, filter.getLimit()));
+			responseDTO.setTotalPages(filter.isUnpaged() ? -1 : (int) Math.ceilDiv(count, filter.getLimit()));
 			
 			log.info("Categories consulted successfully");
 			
@@ -80,21 +80,26 @@ public class GetCategoryListCommand extends AbstractJsonCommand {
 	        filter.setTitle(title.trim());
 	    }
 	    
-	    int page = NumberUtils.toInt(request.getParameter("page"), 1);
-	    if (page < 1) {
-	        page = 1;
+	    boolean unpaged = Boolean.parseBoolean(request.getParameter("unpaged"));
+	    filter.setUnpaged(unpaged);
+	    
+	    if (!unpaged) {	    	
+	    	int page = NumberUtils.toInt(request.getParameter("page"), 1);
+	    	if (page < 1) {
+	    		page = 1;
+	    	}
+	    	
+	    	int pageSize = NumberUtils.toInt(request.getParameter("pageSize"), 2);
+	    	if (pageSize < 1) {
+	    		pageSize = 10;
+	    	}
+	    	
+	    	int offset = (page - 1) * pageSize;
+	    	
+	    	filter.setPage(page);
+	    	filter.setLimit(pageSize);
+	    	filter.setOffset(offset);
 	    }
-
-	    int pageSize = NumberUtils.toInt(request.getParameter("pageSize"), 2);
-	    if (pageSize < 1) {
-	        pageSize = 10;
-	    }
-
-	    int offset = (page - 1) * pageSize;
-
-	    filter.setPage(page);
-	    filter.setLimit(pageSize);
-	    filter.setOffset(offset);
 	    
 	    return filter;
 	}
