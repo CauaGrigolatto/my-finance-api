@@ -8,12 +8,21 @@ $(document).ready(function() {
 	$('#addTransactionModal #btn-save-transaction').on('click', function() {
 		saveTransaction();
 	});
+	
+	$('#filter-transactions-form #btn-filter').on('click', function() {
+		loadTransactions();
+	});
 });
 
 function loadTransactions(page = 1) {
+	const filterForm = $('#filter-transactions-form');
+	const data = filterForm.serializeArray();
+	data.push({name: 'page', value: page});
+	data.push({name: 'pageSize', value: 5});
+	
 	$.ajax({
 		url: 'http://localhost:15433/myfinanceapi/transaction',
-		data: { page, pageSize: 5 },
+		data: data,
 		method: 'GET'
 	})
 		.done(function(response) {
@@ -172,6 +181,7 @@ function loadCategories() {
 	})
 		.done(function(response) {
 			setCategoriesModalAddTransaction(response.data);
+			setCategoriesFilter(response.data);
 		})
 		.fail(function() {
 
@@ -183,6 +193,21 @@ function setCategoriesModalAddTransaction(categories) {
 	const selectCategories = modal.find('#category');
 
 	selectCategories.empty().append('<option value="" selected disabled>Selecione uma categoria</option>');
+
+	$(categories).each(function(index, category) {
+		selectCategories.append(
+			$('<option></option>')
+				.val(category.id)
+				.text(category.title)
+		);
+	});
+}
+
+function setCategoriesFilter(categories) {
+	const form = $('#filter-transactions-form');
+	const selectCategories = form.find('#category');
+
+	selectCategories.empty().append('<option value="" selected>Todas</option>');
 
 	$(categories).each(function(index, category) {
 		selectCategories.append(

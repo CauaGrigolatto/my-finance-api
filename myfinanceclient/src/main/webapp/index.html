@@ -76,37 +76,38 @@
 		<div class="card mb-4 bg-secondary bg-opacity-10 border-0">
 		    <div class="card-body">
 		        <h5 class="card-title mb-3">Filtrar Transações</h5>
-		        <form class="row g-3">
+		        <form class="row g-3" id="filter-transactions-form">
 		            <div class="col-md-2">
-		                <label for="month" class="form-label">Mês</label>
-		                <select id="month" class="form-select bg-dark text-light">
-		                    <option selected>Todos</option>
-		                    <option>Janeiro</option>
-		                    <option>Fevereiro</option>
-		                    <!-- outros meses -->
-		                </select>
-		            </div>
+		                <label for="month" class="form-label">Mês</label> 
+		                <select id="month" name="month" class="form-select bg-dark text-light">
+							<option value="" selected>Todos</option>
+							<option value="1">Janeiro</option>
+							<option value="2">Fevereiro</option>
+							<option value="3">Março</option>
+							<option value="4">Abril</option>
+							<option value="5">Maio</option>
+							<option value="6">Junho</option>
+							<option value="7">Julho</option>
+							<option value="8">Agosto</option>
+							<option value="9">Setembro</option>
+							<option value="10">Outubro</option>
+							<option value="11">Novembro</option>
+							<option value="12">Dezembro</option>
+						</select>
+					</div>
 		            <div class="col-md-2">
 		                <label for="year" class="form-label">Ano</label>
-		                <select id="year" class="form-select bg-dark text-light">
-		                    <option selected>2024</option>
-		                    <option>2023</option>
-		                    <!-- outros anos -->
-		                </select>
+		                <input type="text" id="year" name="year" class="form-control bg-dark text-light" placeholder="ex.: 2025">
 		            </div>
 		            <div class="col-md-2">
 		                <label for="category" class="form-label">Categoria</label>
-		                <select id="category" class="form-select bg-dark text-light">
+		                <select id="category" name="category" class="form-select bg-dark text-light">
 		                    <option selected>Todas</option>
-		                    <option>Alimentação</option>
-		                    <option>Transporte</option>
-		                    <option>Salário</option>
-		                    <!-- outras categorias -->
 		                </select>
 		            </div>
 		            <div class="col-md-2">
 		                <label for="type" class="form-label">Tipo</label>
-		                <select id="type" class="form-select bg-dark text-light">
+		                <select id="type" name="type" class="form-select bg-dark text-light">
 		                    <option selected>Todos</option>
 		                    <option value="REVENUE">Receita</option>
 		                    <option value="EXPENSE">Despesa</option>
@@ -114,11 +115,10 @@
 		            </div>
 		            <div class="col-md-4">
 		                <label for="description" class="form-label">Descrição</label>
-		                <input type="text" id="description" class="form-control bg-dark text-light" 
-		                       placeholder="Pesquisar por descrição...">
+		                <input type="text" id="description" name="description" class="form-control bg-dark text-light" placeholder="Pesquisar por descrição...">
 		            </div>
 		            <div class="col-12">
-		                <button type="submit" class="btn btn-primary me-2">Filtrar</button>
+		                <button type="button" id="btn-filter" class="btn btn-primary me-2">Filtrar</button>
 		                <button type="reset" class="btn btn-outline-secondary">Limpar</button>
 		            </div>
 		        </form>
