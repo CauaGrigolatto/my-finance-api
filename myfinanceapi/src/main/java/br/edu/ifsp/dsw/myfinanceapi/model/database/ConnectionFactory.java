@@ -10,15 +10,10 @@ import org.slf4j.LoggerFactory;
 
 public class ConnectionFactory {
 	private static final Logger log = LoggerFactory.getLogger(ConnectionFactory.class);
-	
-	private static Connection conn;
-	
+		
 	public static Connection getConnection() throws Throwable {
 		try {			
-			if (conn == null || conn.isClosed()) {
-				createConnection();
-			}
-			return conn;
+			return createConnection();
 		}
 		catch(Throwable t) {
 			log.error("Error on getting connection");
@@ -26,11 +21,11 @@ public class ConnectionFactory {
 		}		
 	}
 	
-	private static void createConnection() throws Throwable {
+	private static Connection createConnection() throws Throwable {
 		try {
 			InitialContext context = new InitialContext();
 			DataSource ds = (DataSource) context.lookup("java:comp/env/jdbc/myfinanceapi");
-			conn = ds.getConnection();			
+			return ds.getConnection();			
 		}
 		catch(Throwable t) {
 			log.error("Error on creating connection");
