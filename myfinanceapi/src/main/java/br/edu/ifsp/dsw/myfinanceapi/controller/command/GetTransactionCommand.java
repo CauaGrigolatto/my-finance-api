@@ -1,10 +1,15 @@
 package br.edu.ifsp.dsw.myfinanceapi.controller.command;
 
 import java.sql.Connection;
+import java.util.Date;
 
 import org.apache.http.HttpStatus;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import br.edu.ifsp.dsw.myfinanceapi.dto.ResponseDTO;
+import br.edu.ifsp.dsw.myfinanceapi.model.adapter.DateAdapter;
 import br.edu.ifsp.dsw.myfinanceapi.model.dao.CategoryDAOImpl;
 import br.edu.ifsp.dsw.myfinanceapi.model.dao.TransactionDAOImpl;
 import br.edu.ifsp.dsw.myfinanceapi.model.database.ConnectionFactory;
@@ -61,8 +66,13 @@ public class GetTransactionCommand extends AbstractJsonCommand {
 				log.info("Transaction consulted successfully", transaction);
 				response.setStatus(HttpStatus.SC_OK);
 			}
+			
+			Gson transactionSerializer = new GsonBuilder()
+			        .registerTypeAdapter(java.util.Date.class, new DateAdapter())
+			        .registerTypeAdapter(java.sql.Date.class, new DateAdapter())
+			        .create();
 						
-			String json = gson.toJson(responseDTO);
+			String json = transactionSerializer.toJson(responseDTO);
 			response.setContentType("application/json");
 			response.getWriter().write(json);
 		}
@@ -76,7 +86,11 @@ public class GetTransactionCommand extends AbstractJsonCommand {
 				null
 			);
 			
-			String responnseJson = gson.toJson(responseDTO);
+			Gson transactionSerializer = new GsonBuilder()
+			        .registerTypeAdapter(Date.class, new DateAdapter())
+			        .create();
+			
+			String responnseJson = transactionSerializer.toJson(responseDTO);
 			response.setContentType("application/json");
 			response.getWriter().write(responnseJson);
 			

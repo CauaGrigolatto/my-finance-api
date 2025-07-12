@@ -6,8 +6,12 @@ import java.util.List;
 
 import org.apache.http.HttpStatus;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import br.edu.ifsp.dsw.myfinanceapi.dto.ErrorFieldDTO;
 import br.edu.ifsp.dsw.myfinanceapi.dto.ResponseDTO;
+import br.edu.ifsp.dsw.myfinanceapi.model.adapter.TransactionAdapter;
 import br.edu.ifsp.dsw.myfinanceapi.model.dao.TransactionDAOImpl;
 import br.edu.ifsp.dsw.myfinanceapi.model.database.ConnectionFactory;
 import br.edu.ifsp.dsw.myfinanceapi.model.entity.Transaction;
@@ -30,10 +34,14 @@ public class PutTransactionCommand extends AbstractJsonCommand {
 			String[] parts = request.getPathInfo().split("/");
 			String idStr = parts[2];
 			Integer id = Integer.valueOf(idStr);
-			
+						
 			String json = toJson(request);
 			
-			Transaction transaction = gson.fromJson(json, Transaction.class);
+			Gson transactionSerializer = new GsonBuilder()
+					.registerTypeAdapter(Transaction.class, new TransactionAdapter())
+					.create();
+			
+			Transaction transaction = transactionSerializer.fromJson(json, Transaction.class);
 			transaction.setId(id);
 			
 			Transaction transactionToUpdate = transactionDAO.findById(id);

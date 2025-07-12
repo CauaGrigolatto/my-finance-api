@@ -28,9 +28,11 @@ $(document).ready(function() {
 			title: 'Tem certeza?',
 			text: "Você não poderá reverter isto!",
 			icon: 'warning',
+			background: '#1e1e1e',
+			color: '#f1f5f9', // cor clara para texto (quase branco/cinza bem claro)
 			showCancelButton: true,
-			confirmButtonColor: '#3085d6',
-			cancelButtonColor: '#d33',
+			confirmButtonColor: '#3b82f6', // azul (botão principal)
+			cancelButtonColor: '#ef4444',  // vermelho (botão cancelar)
 			confirmButtonText: 'Sim, quero continuar!',
 			cancelButtonText: 'Cancelar'
 		}).then((result) => {
@@ -45,6 +47,45 @@ $(document).ready(function() {
 	$(document).on('click', '.btn-delete-category', function() {
 		const id = $(this).data('id');
 		deleteCategory(id);
+	});
+	
+	$(document).on('click', '.btn-edit-transaction', function() {
+		const id = $(this).data('id');
+		
+		$.ajax({
+			url: 'http://localhost:15433/myfinanceapi/transaction/' + id,
+			method: 'GET'
+		})
+		.done(function(response) {
+			const transaction = response.data;
+			
+			$('#add-transaction-modal').click();
+			
+			const modal = $('#addTransactionModal');
+			const form = modal.find('#save-transaction-form');
+			form.attr('data-method', 'PUT');
+			form.attr('data-id', transaction.id);
+			form.find('#description').val(transaction.description);
+			form.find('#value').val(transaction.value);
+			form.find('#type').val(transaction.type);
+			form.find('#category').val(transaction.category?.id);
+			form.find('#dueDate').val(transaction.dueDate);
+		})
+		.fail(function() {
+			
+		});
+	});
+	
+	$(document).on('click', '#add-transaction-modal', function() {
+		const modal = $('#addTransactionModal');
+		const form = modal.find('#save-transaction-form');
+		form.attr('data-method', 'POST');
+		form.attr('data-id', -1);
+	});
+	
+	$(document).on('hidden.bs.modal', '#addTransactionModal', function() {
+		const form = $(this).find('#save-transaction-form');
+		form[0].reset();
 	});
 });
 
@@ -109,8 +150,8 @@ function createTransactionListItem(transaction) {
                             <i class="bi bi-three-dots-vertical"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item edit-btn" href="#" data-id="${transaction.id}"><i class="bi bi-pencil me-2"></i>Editar</a></li>
-                            <li><a class="dropdown-item text-danger btn-delete-transaction" data-id="${transaction.id}"><i class="bi bi-trash me-2"></i>Excluir</a></li>
+                            <li><button class="dropdown-item btn-edit-transaction" href="#" data-id="${transaction.id}"><i class="bi bi-pencil me-2"></i>Editar</button></li>
+                            <li><button class="dropdown-item text-danger btn-delete-transaction" data-id="${transaction.id}"><i class="bi bi-trash me-2"></i>Excluir</button></li>
                         </ul>
                     </div>
                 </div>
@@ -169,7 +210,7 @@ function setPaginationIndexes(apiResponse, callbackLoadPagination) {
 		prevItem.addClass('disabled');
 	}
 	prevItem.append(
-		$('<a class="page-link" href="#" aria-label="Previous"></a>')
+		$('<button class="page-link" aria-label="Previous"></button>')
 			.append($('<span aria-hidden="true">&laquo;</span>'))
 			.append($('<span class="sr-only">Anterior</span>'))
 	);
@@ -195,7 +236,7 @@ function setPaginationIndexes(apiResponse, callbackLoadPagination) {
 		nextItem.addClass('disabled');
 	}
 	nextItem.append(
-		$('<a class="page-link" href="#" aria-label="Next"></a>')
+		$('<button class="page-link" href="#" aria-label="Next"></button>')
 			.append($('<span aria-hidden="true">&raquo;</span>'))
 			.append($('<span class="sr-only">Próxima</span>'))
 	);
@@ -220,6 +261,14 @@ function setTransactionIndexesButtons(apiResponse, callbackLoadPagination) {
 function saveTransaction() {
 	const modal = $('#addTransactionModal');
 	const form = modal.find('#save-transaction-form');
+	const method = form.attr('data-method');
+	
+	let url = 'http://localhost:15433/myfinanceapi/transaction';
+	
+	if (method === 'PUT') {
+		const id = form.attr('data-id');
+		url = 'http://localhost:15433/myfinanceapi/transaction/' + id
+	}
 
 	const formData = {};
 	$.each(form.serializeArray(), function(i, field) {
@@ -229,14 +278,13 @@ function saveTransaction() {
 	const jsonData = JSON.stringify(formData);
 
 	$.ajax({
-		url: 'http://localhost:15433/myfinanceapi/transaction',
+		url: url,
 		data: jsonData,
-		method: 'POST',
+		method: method,
 		contentType: 'application/json',
 		dataType: 'json'
 	})
 	.done(function() {
-		form[0].reset();
 		modal.modal('hide');
 		$(document).find('#transactions-tab').click();
 	})

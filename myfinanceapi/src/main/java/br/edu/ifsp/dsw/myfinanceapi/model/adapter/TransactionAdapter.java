@@ -6,6 +6,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
@@ -43,8 +45,7 @@ public class TransactionAdapter extends TypeAdapter<Transaction> {
 		transaction.setType(TransactionType.valueOf(jsonObject.get("type").getAsString()));
 		transaction.setDueDate(dueDate);
 		
-
-		if (jsonObject.has("category")) {
+		if (jsonObject.has("category") && StringUtils.isNotBlank(jsonObject.get("category").getAsString())) {
 			Category category = new Category();
 			category.setId(jsonObject.get("category").getAsInt());
 			transaction.setCategory(category);

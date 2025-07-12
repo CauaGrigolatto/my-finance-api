@@ -8,9 +8,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpStatus;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import br.edu.ifsp.dsw.myfinanceapi.dto.PaginatedResponseDTO;
 import br.edu.ifsp.dsw.myfinanceapi.dto.ResponseDTO;
 import br.edu.ifsp.dsw.myfinanceapi.dto.TransactionFilterDTO;
+import br.edu.ifsp.dsw.myfinanceapi.model.adapter.DateAdapter;
 import br.edu.ifsp.dsw.myfinanceapi.model.dao.CategoryDAOImpl;
 import br.edu.ifsp.dsw.myfinanceapi.model.dao.TransactionDAOImpl;
 import br.edu.ifsp.dsw.myfinanceapi.model.database.ConnectionFactory;
@@ -56,8 +60,13 @@ public class GetTransactionListCommand extends AbstractJsonCommand {
 			responseDTO.setTotalPages((int) Math.ceilDiv(count, filter.getLimit()));
 			
 			log.info("Transactions consulted successfully");
+			
+			Gson transactionSerializer = new GsonBuilder()
+			        .registerTypeAdapter(java.util.Date.class, new DateAdapter())
+			        .registerTypeAdapter(java.sql.Date.class, new DateAdapter())
+			        .create();
 
-			String json = gson.toJson(responseDTO);
+			String json = transactionSerializer.toJson(responseDTO);
 			response.setStatus(HttpStatus.SC_OK);
 			response.setContentType("application/json");
 			response.getWriter().write(json);

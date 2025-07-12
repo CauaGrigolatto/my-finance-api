@@ -70,7 +70,7 @@ public class TransactionDAOImpl extends BasicDAO<Transaction> implements Transac
 			ps.setBigDecimal(2, transaction.getValue());
 			ps.setString(3, transaction.getType().toString());
 			ps.setDate(4, new java.sql.Date(transaction.getDueDate().getTime()));
-			ps.setInt(5, transaction.getCategory().getId());
+			ps.setObject(5, transaction.getCategory() != null ? transaction.getCategory().getId() : null, Types.INTEGER);
 			ps.setInt(6, transaction.getId());
 			
 			int rows = ps.executeUpdate();
