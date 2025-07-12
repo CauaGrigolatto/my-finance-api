@@ -1,7 +1,8 @@
 $(document).ready(function() {
 	loadTransactions();
 	loadCategories();
-
+	loadFinancesSummary();
+	
 	$('#addTransactionModal #btn-save-transaction').on('click', function() {
 		saveTransaction();
 	});
@@ -168,6 +169,7 @@ function saveTransaction() {
 		form[0].reset();
 		modal.modal('hide');
 		loadTransactions(1);
+		loadFinancesSummary();
 	})
 	.fail(function() {
 
@@ -245,4 +247,49 @@ function saveCategory() {
 	.fail(function() {
 
 	});
+}
+
+function loadFinancesSummary() {
+	loadRevenues();
+	loadExpenses();
+	loadBalance();
+}
+
+function loadRevenues() {
+	$.ajax({
+		url: 'http://localhost:15433/myfinanceapi/transaction/revenues-sum',
+		method: 'GET'
+	})
+	.done(function(response) {
+		$('#revenues-sum').text(response.data);
+	})
+	.fail(function() {
+		
+	})
+}
+
+function loadExpenses() {
+	$.ajax({
+		url: 'http://localhost:15433/myfinanceapi/transaction/expenses-sum',
+		method: 'GET'
+	})
+	.done(function(response) {
+		$('#expenses-sum').text(response.data);
+	})
+	.fail(function() {
+		
+	})
+}
+
+function loadBalance() {
+	$.ajax({
+		url: 'http://localhost:15433/myfinanceapi/transaction/balance',
+		method: 'GET'
+	})
+	.done(function(response) {
+		$('#balance').text(response.data);
+	})
+	.fail(function() {
+		
+	})
 }
