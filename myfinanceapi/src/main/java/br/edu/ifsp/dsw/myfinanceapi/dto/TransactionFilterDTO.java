@@ -142,7 +142,7 @@ public class TransactionFilterDTO implements FilterDTO {
 		}
 				
 		if (! isCount) {
-			where.append(" ORDER BY t.transaction_id DESC");	
+			where.append(" ORDER BY t.updated_at DESC");	
 			where.append(" LIMIT ? OFFSET ?");			
 		}
 
