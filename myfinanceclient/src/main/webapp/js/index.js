@@ -1,8 +1,7 @@
 $(document).ready(function() {
 	loadTransactions();
 	loadCategories();
-	loadFinancesSummary();
-	
+		
 	$('#addTransactionModal #btn-save-transaction').on('click', function() {
 		saveTransaction();
 	});
@@ -13,6 +12,25 @@ $(document).ready(function() {
 
 	$('#filter-transactions-form #btn-filter').on('click', function() {
 		loadTransactions();
+	});
+	
+	$(document).on('click', '.btn-delete-transaction', function() {
+		Swal.fire({
+			title: 'Tem certeza?',
+			text: "Você não poderá reverter isto!",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Sim, quero continuar!',
+			cancelButtonText: 'Cancelar'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				const id = $(this).data('id');
+				deleteTransaction(id);
+			}
+		})
+		
 	});
 });
 
@@ -31,6 +49,7 @@ function loadTransactions(page = 1) {
 		clearTransactionsList();
 		listTransactions(response.data);
 		setPaginationIndexes(response);
+		loadFinancesSummary();
 	})
 	.fail(function() {
 
@@ -77,7 +96,7 @@ function functionCreateTransactionListItem(transaction) {
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item edit-btn" href="#" data-id="${transaction.id}"><i class="bi bi-pencil me-2"></i>Editar</a></li>
-                            <li><a class="dropdown-item text-danger delete-btn" href="#" data-id="${transaction.id}"><i class="bi bi-trash me-2"></i>Excluir</a></li>
+                            <li><a class="dropdown-item text-danger btn-delete-transaction" data-id="${transaction.id}"><i class="bi bi-trash me-2"></i>Excluir</a></li>
                         </ul>
                     </div>
                 </div>
@@ -210,7 +229,7 @@ function setCategoriesModalAddTransaction(categories) {
 	const modal = $('#addTransactionModal');
 	const selectCategories = modal.find('#category');
 
-	selectCategories.empty().append('<option value="" selected disabled>Selecione uma categoria</option>');
+	selectCategories.empty().append('<option value="" selected>Selecione uma categoria</option>');
 
 	$(categories).each(function(index, category) {
 		selectCategories.append(
@@ -288,6 +307,19 @@ function loadBalance() {
 	})
 	.done(function(response) {
 		$('#balance').text(response.data);
+	})
+	.fail(function() {
+		
+	})
+}
+
+function deleteTransaction(id) {
+	$.ajax({
+		url: 'http://localhost:15433/myfinanceapi/transaction/' + id,
+		method: 'DELETE'
+	})
+	.done(function() {
+		loadTransactions(1);
 	})
 	.fail(function() {
 		
