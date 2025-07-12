@@ -69,6 +69,7 @@ public class CategoryFilterDTO implements FilterDTO {
 		}
 		
 		if (!isCount && !unpaged) {
+			where.append(" ORDER BY c.category_id DESC");	
 			where.append(" LIMIT ? OFFSET ?");			
 		}
 

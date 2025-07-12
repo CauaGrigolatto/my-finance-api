@@ -1,6 +1,14 @@
 $(document).ready(function() {
 	loadTransactions();
-	loadCategories();
+	loadUnpagedCategories();
+
+	$(document).on('click', '#transactions-tab', function() {		
+		loadTransactions();
+	});
+	
+	$(document).on('click', '#categories-tab', function() {		
+		loadCategories();
+	});
 		
 	$('#addTransactionModal #btn-save-transaction').on('click', function() {
 		saveTransaction();
@@ -11,6 +19,7 @@ $(document).ready(function() {
 	});
 
 	$('#filter-transactions-form #btn-filter').on('click', function() {
+		$(document).find('#transactions-tab').click();
 		loadTransactions();
 	});
 	
@@ -32,6 +41,11 @@ $(document).ready(function() {
 		})
 		
 	});
+	
+	$(document).on('click', '.btn-delete-category', function() {
+		const id = $(this).data('id');
+		deleteCategory(id);
+	});
 });
 
 function loadTransactions(page = 1) {
@@ -48,7 +62,7 @@ function loadTransactions(page = 1) {
 	.done(function(response) {
 		clearTransactionsList();
 		listTransactions(response.data);
-		setPaginationIndexes(response);
+		setPaginationIndexes(response, loadTransactions);
 		loadFinancesSummary();
 	})
 	.fail(function() {
@@ -67,11 +81,11 @@ function listTransactions(transactions) {
 }
 
 function appendTransaction(transaction) {
-	listItem = functionCreateTransactionListItem(transaction);
+	listItem = createTransactionListItem(transaction);
 	$('#transaction-list .list-group').append(listItem);
 }
 
-function functionCreateTransactionListItem(transaction) {
+function createTransactionListItem(transaction) {
 	const itemClass = transaction.type === 'REVENUE' ? 'revenue-item' : 'expense-item';
 	const textColor = transaction.type === 'REVENUE' ? 'text-success' : 'text-warning';
 	const valuePrefix = transaction.type === 'REVENUE' ? '' : '- ';
@@ -106,7 +120,44 @@ function functionCreateTransactionListItem(transaction) {
 
 	return listItem;
 }
-function setPaginationIndexes(apiResponse) {
+
+function clearCategoriesList() {
+	$('#categories-list .list-group').empty();
+}
+
+function listCategories(categories) {
+	$(categories).each(function() {
+		appendCategory($(this)[0]);
+	});
+}
+
+function appendCategory(category) {
+	listItem = createCategoryListItem(category);
+	$('#categories-list .list-group').append(listItem);
+}
+
+function createCategoryListItem(category) {
+    const listItem = $(`
+        <div class="list-group-item category-item bg-transparent text-light border-0 border-bottom mb-2">
+            <div class="d-flex w-100 justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-1">${category.title}</h6>
+                </div>
+                <div class="text-end">
+                    <button class="btn btn-sm btn-outline-danger btn-delete-category" 
+                            data-id="${category.id}" 
+                            title="Excluir categoria">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `);
+
+    return listItem;
+}
+
+function setPaginationIndexes(apiResponse, callbackLoadPagination) {
 	const pagination = $('.pagination');
 	pagination.empty(); // Limpa a paginação existente
 
@@ -151,17 +202,17 @@ function setPaginationIndexes(apiResponse) {
 	ul.append(nextItem);
 
 	pagination.append(ul);
-	setIndexButtons(apiResponse);
+	setTransactionIndexesButtons(apiResponse, callbackLoadPagination);
 }
 
-function setIndexButtons(apiResponse) {
+function setTransactionIndexesButtons(apiResponse, callbackLoadPagination) {
 	$('.page-link').on('click', function(e) {
 		e.preventDefault();
 		const page = $(this).data('page') ||
 			($(this).attr('aria-label') === 'Next' ? apiResponse.page + 1 : apiResponse.page - 1);
 
 		if (page >= 1 && page <= apiResponse.totalPages && page !== apiResponse.page) {
-			loadTransactions(page);
+			callbackLoadPagination(page);
 		}
 	});
 }
@@ -187,15 +238,30 @@ function saveTransaction() {
 	.done(function() {
 		form[0].reset();
 		modal.modal('hide');
-		loadTransactions(1);
-		loadFinancesSummary();
+		$(document).find('#transactions-tab').click();
 	})
 	.fail(function() {
 
 	});
 }
 
-function loadCategories() {
+function loadCategories(page = 1) {
+	$.ajax({
+		url: 'http://localhost:15433/myfinanceapi/category',
+		data: {page: page, pageSize: 5},
+		method: 'GET'
+	})
+	.done(function(response) {
+		clearCategoriesList();
+		listCategories(response.data);
+		setPaginationIndexes(response, loadCategories);
+	})
+	.fail(function() {
+
+	});
+}
+
+function loadUnpagedCategories() {
 	$.ajax({
 		url: 'http://localhost:15433/myfinanceapi/category',
 		data: { unpaged: true },
@@ -261,7 +327,8 @@ function saveCategory() {
 	.done(function() {
 		form[0].reset();
 		modal.modal('hide');
-		loadCategories();
+		$(document).find('#categories-tab').click();
+		loadUnpagedCategories();
 	})
 	.fail(function() {
 
@@ -320,6 +387,19 @@ function deleteTransaction(id) {
 	})
 	.done(function() {
 		loadTransactions(1);
+	})
+	.fail(function() {
+		
+	})
+}
+
+function deleteCategory(id) {
+	$.ajax({
+		url: 'http://localhost:15433/myfinanceapi/category/' + id,
+		method: 'DELETE'
+	})
+	.done(function() {
+		loadCategories(1);
 	})
 	.fail(function() {
 		

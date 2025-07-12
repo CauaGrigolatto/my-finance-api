@@ -126,8 +126,8 @@
 		</div>
         
         <!-- Botões de Ação -->
-        <div class="d-flex justify-content-between mb-4">
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+        <div class="d-flex mb-4">
+            <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
                 <i class="bi bi-plus-circle"></i> Adicionar Transação
             </button>
             <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
@@ -135,24 +135,67 @@
             </button>
         </div>
         
-        <!-- Lista de Transações -->
-        <div class="card bg-secondary bg-opacity-10 border-0">
-            <div class="card-body" id="transaction-list">
-                <h5 class="card-title mb-4">Transações Recentes</h5>
-                
-                <div class="list-group">
-                   
-                </div>
-                
-                <!-- Paginação -->
-                <nav aria-label="Page navigation" class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </div>
+       <!-- Abas de Navegação -->
+		<ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active" id="transactions-tab"
+					data-bs-toggle="tab" data-bs-target="#transactions" type="button"
+					role="tab" aria-controls="transactions" aria-selected="true">
+					Transações</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="categories-tab" data-bs-toggle="tab"
+					data-bs-target="#categories" type="button" role="tab"
+					aria-controls="categories" aria-selected="false">
+					Categorias</button>
+			</li>
+		</ul>
+
+		<!-- Conteúdo das Abas -->
+		<div class="tab-content" id="myTabContent">
+			<!-- Aba de Transações -->
+			<div class="tab-pane fade show active" id="transactions"
+				role="tabpanel" aria-labelledby="transactions-tab">
+				<div class="card bg-secondary bg-opacity-10 border-0">
+					<div class="card-body" id="transaction-list">
+						<h5 class="card-title mb-4">Transações Recentes</h5>
+
+						<div class="list-group">
+							<!-- Itens de transação aparecerão aqui -->
+						</div>
+
+						<!-- Paginação -->
+						<nav aria-label="Page navigation" class="mt-4">
+							<ul class="pagination justify-content-center">
+								<!-- Paginação será inserida aqui -->
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+
+			<!-- Aba de Categorias -->
+			<div class="tab-pane fade" id="categories" 
+				role="tabpanel" aria-labelledby="categories-tab">
+				<div class="card bg-secondary bg-opacity-10 border-0">
+					<div class="card-body" id="categories-list">
+						<h5 class="card-title mb-4">Minhas Categorias</h5>
+
+						<div class="list-group">
+							<!-- Itens de categoria aparecerão aqui -->
+						</div>
+						
+						<!-- Paginação -->
+						<nav aria-label="Page navigation" class="mt-4">
+							<ul class="pagination justify-content-center">
+								<!-- Paginação será inserida aqui -->
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
     
     <!-- Modal Adicionar Transação -->
     <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
