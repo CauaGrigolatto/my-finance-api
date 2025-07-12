@@ -1,6 +1,3 @@
-
-
-
 $(document).ready(function() {
 	loadTransactions();
 	loadCategories();
@@ -8,7 +5,11 @@ $(document).ready(function() {
 	$('#addTransactionModal #btn-save-transaction').on('click', function() {
 		saveTransaction();
 	});
-	
+
+	$('#addCategoryModal #btn-save-category').on('click', function() {
+		saveCategory();
+	});
+
 	$('#filter-transactions-form #btn-filter').on('click', function() {
 		loadTransactions();
 	});
@@ -17,22 +18,22 @@ $(document).ready(function() {
 function loadTransactions(page = 1) {
 	const filterForm = $('#filter-transactions-form');
 	const data = filterForm.serializeArray();
-	data.push({name: 'page', value: page});
-	data.push({name: 'pageSize', value: 5});
-	
+	data.push({ name: 'page', value: page });
+	data.push({ name: 'pageSize', value: 5 });
+
 	$.ajax({
 		url: 'http://localhost:15433/myfinanceapi/transaction',
 		data: data,
 		method: 'GET'
 	})
-		.done(function(response) {
-			clearTransactionsList();
-			listTransactions(response.data);
-			setPaginationIndexes(response);
-		})
-		.fail(function() {
+	.done(function(response) {
+		clearTransactionsList();
+		listTransactions(response.data);
+		setPaginationIndexes(response);
+	})
+	.fail(function() {
 
-		});
+	});
 }
 
 function clearTransactionsList() {
@@ -163,14 +164,14 @@ function saveTransaction() {
 		contentType: 'application/json',
 		dataType: 'json'
 	})
-		.done(function() {
-			form[0].reset();
-			modal.modal('hide');
-			loadTransactions(1);
-		})
-		.fail(function() {
+	.done(function() {
+		form[0].reset();
+		modal.modal('hide');
+		loadTransactions(1);
+	})
+	.fail(function() {
 
-		})
+	});
 }
 
 function loadCategories() {
@@ -179,27 +180,12 @@ function loadCategories() {
 		data: { unpaged: true },
 		method: 'GET'
 	})
-		.done(function(response) {
-			setCategoriesModalAddTransaction(response.data);
-			setCategoriesFilter(response.data);
-		})
-		.fail(function() {
+	.done(function(response) {
+		setCategoriesModalAddTransaction(response.data);
+		setCategoriesFilter(response.data);
+	})
+	.fail(function() {
 
-		});
-}
-
-function setCategoriesModalAddTransaction(categories) {
-	const modal = $('#addTransactionModal');
-	const selectCategories = modal.find('#category');
-
-	selectCategories.empty().append('<option value="" selected disabled>Selecione uma categoria</option>');
-
-	$(categories).each(function(index, category) {
-		selectCategories.append(
-			$('<option></option>')
-				.val(category.id)
-				.text(category.title)
-		);
 	});
 }
 
@@ -218,3 +204,45 @@ function setCategoriesFilter(categories) {
 	});
 }
 
+function setCategoriesModalAddTransaction(categories) {
+	const modal = $('#addTransactionModal');
+	const selectCategories = modal.find('#category');
+
+	selectCategories.empty().append('<option value="" selected disabled>Selecione uma categoria</option>');
+
+	$(categories).each(function(index, category) {
+		selectCategories.append(
+			$('<option></option>')
+				.val(category.id)
+				.text(category.title)
+		);
+	});
+}
+
+function saveCategory() {
+	const modal = $('#addCategoryModal');
+	const form = modal.find('#save-category-form');
+
+	const formData = {};
+	$.each(form.serializeArray(), function(i, field) {
+		formData[field.name] = field.value;
+	});
+
+	const jsonData = JSON.stringify(formData);
+
+	$.ajax({
+		url: 'http://localhost:15433/myfinanceapi/category',
+		data: jsonData,
+		method: 'POST',
+		contentType: 'application/json',
+		dataType: 'json'
+	})
+	.done(function() {
+		form[0].reset();
+		modal.modal('hide');
+		loadCategories();
+	})
+	.fail(function() {
+
+	});
+}
