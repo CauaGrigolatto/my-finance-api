@@ -59,7 +59,7 @@ $(document).ready(function() {
 		.done(function(response) {
 			const transaction = response.data;
 			
-			$('#add-transaction-modal').click();
+			$('#addTransactionModal').modal('show');
 			
 			const modal = $('#addTransactionModal');
 			const form = modal.find('#save-transaction-form');
@@ -105,6 +105,7 @@ function loadTransactions(page = 1) {
 		listTransactions(response.data);
 		setPaginationIndexes(response, loadTransactions);
 		loadFinancesSummary();
+		transactionsPerCategoryPieChart();
 	})
 	.fail(function() {
 
@@ -375,7 +376,7 @@ function saveCategory() {
 	.done(function() {
 		form[0].reset();
 		modal.modal('hide');
-		$(document).find('#categories-tab').click();
+		loadCategories();
 		loadUnpagedCategories();
 	})
 	.fail(function() {

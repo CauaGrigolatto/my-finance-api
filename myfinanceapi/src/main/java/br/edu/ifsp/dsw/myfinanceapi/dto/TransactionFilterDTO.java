@@ -104,10 +104,12 @@ public class TransactionFilterDTO implements FilterDTO {
 		return page;
 	}
 
+	@Override
 	public boolean isUnpaged() {
 		return unpaged;
 	}
 
+	@Override
 	public void setUnpaged(boolean unpaged) {
 		this.unpaged = unpaged;
 	}
@@ -141,7 +143,7 @@ public class TransactionFilterDTO implements FilterDTO {
 			where.append(" AND t.category_id = ?");
 		}
 				
-		if (! isCount) {
+		if (! isCount && ! isUnpaged()) {
 			where.append(" ORDER BY t.updated_at DESC");	
 			where.append(" LIMIT ? OFFSET ?");			
 		}

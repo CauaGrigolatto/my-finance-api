@@ -171,9 +171,10 @@ public class TransactionDAOImpl extends BasicDAO<Transaction> implements Transac
 			    ps.setInt(index++, transactionFilterDTO.getCategoryId());
 			}
 
-			ps.setInt(index++, transactionFilterDTO.getLimit());
-
-			ps.setInt(index++, transactionFilterDTO.getOffset());
+			if (! transactionFilterDTO.isUnpaged()) {				
+				ps.setInt(index++, transactionFilterDTO.getLimit());
+				ps.setInt(index++, transactionFilterDTO.getOffset());
+			}
 
 			ResultSet rs = ps.executeQuery();
 			

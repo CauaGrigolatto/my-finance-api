@@ -130,21 +130,26 @@ public class GetTransactionListCommand extends AbstractJsonCommand {
 	        }
 	    }
 
-	    int page = NumberUtils.toInt(request.getParameter("page"), 1);
-	    if (page < 1) {
-	        page = 1;
+	    boolean unpaged = Boolean.parseBoolean(request.getParameter("unpaged"));
+	    filter.setUnpaged(unpaged);   
+	    
+	    if (!unpaged) {
+	    	int page = NumberUtils.toInt(request.getParameter("page"), 1);
+	    	if (page < 1) {
+	    		page = 1;
+	    	}
+	    	
+	    	int pageSize = NumberUtils.toInt(request.getParameter("pageSize"), 2);
+	    	if (pageSize < 1) {
+	    		pageSize = 10;
+	    	}
+	    	
+	    	int offset = (page - 1) * pageSize;
+	    	
+	    	filter.setPage(page);
+	    	filter.setLimit(pageSize);
+	    	filter.setOffset(offset);	    	
 	    }
-
-	    int pageSize = NumberUtils.toInt(request.getParameter("pageSize"), 2);
-	    if (pageSize < 1) {
-	        pageSize = 10;
-	    }
-
-	    int offset = (page - 1) * pageSize;
-
-	    filter.setPage(page);
-	    filter.setLimit(pageSize);
-	    filter.setOffset(offset);
 
 	    return filter;
 	}
