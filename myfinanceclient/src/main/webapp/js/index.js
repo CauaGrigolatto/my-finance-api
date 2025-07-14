@@ -376,7 +376,7 @@ function saveCategory() {
 	.done(function() {
 		form[0].reset();
 		modal.modal('hide');
-		loadCategories();
+		$(document).find('#categories-tab').click();
 		loadUnpagedCategories();
 	})
 	.fail(function() {
