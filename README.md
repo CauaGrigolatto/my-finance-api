@@ -76,15 +76,10 @@ A API também permite a gestão das categorias utilizadas nas transações:
 ---
 
 ## 🗄 Banco de Dados
-myfinanceapi/
-├── src/
-│ ├── main/
-│ │ ├── java/ # Código-fonte dos servlets
-│ │ ├── resources/ # Arquivos de configuração
-│ │ └── database/ # Modelos e scripts do banco de dados
-│ │ ├── MER.mwb # Modelo Entidade-Relacionamento (MySQL Workbench)
-│ │ └── SCRIPT.sql # Script SQL de criação do banco de dados
-├── webapp/
-│ └── WEB-INF/ # Arquivos de configuração do web.xml
+
+O modelo e o script SQL para criação do banco de dados estão localizados em: myfinanceapi/src/main/resources/database
+
+---
+
 
 
