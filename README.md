@@ -85,6 +85,6 @@ O modelo e o script SQL para criação do banco de dados estão localizados em: 
 
 Assista ao vídeo demonstrativo da **MyFinanceAPI** para ver suas funcionalidades em ação!
 
-🔗 **[Vídeo Demonstrativo da MyFinanceAPI]([https://myfinanceapi-demo.xai-demo.com/video](https://www.canva.com/design/DAGuHDDQH9A/nRoEh8XMmQQkTPJqLhrtWA/edit?utm_content=DAGuHDDQH9A&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton))**
+🔗 **[Vídeo Demonstrativo da MyFinanceAPI]: [clique aqui e acesse!](https://www.canva.com/design/DAGuHDDQH9A/nRoEh8XMmQQkTPJqLhrtWA/edit?utm_content=DAGuHDDQH9A&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)**
 
-⚠️ **Nota**: O vídeo é uma demonstração pré-gravada. Para testes interativos, configure sua própria instância da API ou acesse a demonstração online (se disponível) conforme as instruções no repositório.
+⚠️ **Nota**: O vídeo é uma demonstração pré-gravada. Para testes interativos, configure sua própria instância da API.
